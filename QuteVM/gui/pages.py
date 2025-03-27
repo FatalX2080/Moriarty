@@ -1,16 +1,15 @@
 import flet as ft
-from config import TEST_LIST
-
-
-# ----------------------------------------------------------------------------------------------------------
+from tasks import test1
 
 
 class BasePage:
     def __init__(self):
         self._page = None
-        self.index = -1
 
-        self.navigation = ft.NavigationDrawer(controls=BasePage.__generate_pages())
+        nav = ft.NavigationDrawerDestination
+        navigate_list = [nav(label="Home", icon=ft.Icons.HOME)]
+        nv_list = navigate_list + [nav(label="Test {0}".format(index)) for index in range(1, 14)]
+        self.navigation = ft.NavigationDrawer(controls=nv_list)
 
     def open_navigate(self, e):
         e.control.page.drawer = self.navigation
@@ -20,57 +19,87 @@ class BasePage:
     def set_switch_event(self, switch_func):
         self.navigation.on_change = switch_func
 
-    @staticmethod
-    def __generate_pages():
-        nav = ft.NavigationDrawerDestination
-        navigate_list = [nav(label="Home", icon=ft.Icons.HOME)]
-        return navigate_list + [nav(label="Test {0}".format(index)) for index in TEST_LIST]
-
-    # ------------------------------------------------------------------------------------------------------
-    def get_page(self):
-        return self._page
-
-    def get_index(self) -> int:
-        return self.index
-
-
-class Factory:
-    __instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
-        return cls.__instance
-
-    def __init__(self, sw_event):
-        self._active_pages = TEST_LIST
-        self._pages_list = []
-
-        self._pages_list.append(Page0())
-
-        self.base_config(sw_event)
-
-    def base_config(self, sw_event):
-        expand_lit = self._active_pages + [0]
-        for iex, page in enumerate(self._pages_list):
-            if page.get_index() not in expand_lit:
-                self._pages_list[iex] = None
-            else:
-                page.set_switch_event(sw_event)
-
-    def get_list(self) -> list:
-        return self._pages_list
-
 
 # ----------------------------------------------------------------------------------------------------------
 class Page0(BasePage):
     def __init__(self):
         super().__init__()
-        self.index = 0
-        self._page = ft.Column([
+        self._page = self.pinit()
+
+    def render(self, g):
+        g().alignment = ft.alignment.center
+        g().content = self._page
+
+    def pinit(self):
+        return ft.Column([
             ft.ElevatedButton("Open end drawer", on_click=self.open_navigate),
         ])
 
-    def render(self, s, g):
-        s(ft.Container(alignment=ft.alignment.center))
+
+class Page1(BasePage):
+    def __init__(self):
+        super().__init__()
+        self.data = {}
+        self.test = test1.Task1()
+
+        self.sign = ft.RadioGroup(
+            content=ft.Column(
+                [
+                    ft.Radio(value="+", label="+"),
+                    ft.Radio(value="-", label="-"),
+                    ft.Radio(value="*", label="*"),
+                    ft.Radio(value="/", label="/"),
+                ]
+            ), value="+"
+        )
+        self.val1_field = ft.TextField(label="Num 1")
+        self.val2_field = ft.TextField(label="Num 2")
+        self.base_field = ft.TextField(label="Base")
+        self.res_text = ft.Text("Result")
+
+        self._page = self.pinit()
+
+    def pinit(self):
+        return ft.Column([
+            ft.Text("Test 1", theme_style=ft.TextThemeStyle.DISPLAY_LARGE),
+            self.val1_field,
+            self.val2_field,
+            self.base_field,
+            ft.Text("Operation"),
+            self.sign,
+            self.res_text,
+            ft.Button(text="Evaluate", on_click=self.process),
+            ft.Button(text="Home", icon=ft.icons.HOME, on_click=self.open_navigate),
+        ])
+
+    def render(self, g):
         g().content = self._page
+
+    # ------------------------------------------------------------------------------------------------------
+    def process(self, e):
+        self.read()
+        assert self.check()
+        self.data["base"] = int(self.data["base"])
+        res = self.test.process(self.data["op"], self.data["values"], self.data["base"])
+        self.res_text.value = "Result: {0}".format(res)
+        self._page.update()
+
+    def read(self):
+        self.data["op"] = self.sign.value
+        self.data["values"] = (self.val1_field.value, self.val2_field.value)
+        self.data["base"] = self.base_field.value
+
+    def check(self) -> bool:
+        try:
+            if self.data["values"][0] == "":
+                return False
+            if self.data["values"][1] == "":
+                return False
+            if self.data["base"] == "":
+                return False
+            int(self.data["values"][0])
+            int(self.data["values"][1])
+            int(self.data["base"])
+        except ValueError:
+            return False
+        return True

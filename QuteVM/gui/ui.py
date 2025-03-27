@@ -1,5 +1,5 @@
 import flet as ft
-from .pages import Factory
+from .factory import Factory
 
 
 class Win:
@@ -10,28 +10,27 @@ class Win:
         self.page.title = "QVM"
         self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
-        self._win = None
-        self.__win_tool = (self.set_win, self.get_win)
-        self.pages_list = Factory(self.switch_page).get_list()
+        self._win = ft.Container()
+        f = Factory(self.switch_page)
+        self.pages_list = f.get_list()
 
-        self.pages_list[0].render(*self.__win_tool)
+        self.pages_list[0].render(self.get_win)
         self.page.update()
 
     # ------------------------------------------------------------------------------------------------------
     def switch_page(self, e=None):
         try:
-            page = self.pages_list[e.control.selected_index]
+            self._win.content = None
+            page_iex = e.control.selected_index
+            page = self.pages_list[page_iex]
             if page is None:
                 page = self.pages_list[0]
 
-            page.render(*self.__win_tool)
-            self.page.update()
+            page.render(self.get_win)
+            e.control.page.update()
         except IndexError:
             raise Exception("Index out of range")
 
     # ------------------------------------------------------------------------------------------------------
-    def set_win(self, new_win=None) -> None:
-        self._win = new_win
-
     def get_win(self):
         return self._win
