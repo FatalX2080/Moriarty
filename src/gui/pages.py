@@ -1,6 +1,5 @@
 import flet as ft
-from tasks import test1
-
+import tests
 
 class BasePage:
     def __init__(self):
@@ -40,7 +39,7 @@ class Page1(BasePage):
     def __init__(self):
         super().__init__()
         self.data = {}
-        self.test = test1.Task1()
+        self.test = tests.Task1()
 
         self.sign = ft.RadioGroup(
             content=ft.Column(
@@ -81,6 +80,7 @@ class Page1(BasePage):
         assert self.check()
         self.data["base"] = int(self.data["base"])
         res = self.test.process(self.data["op"], self.data["values"], self.data["base"])
+        # TODO Старый текст не очищается
         self.res_text.value = "Result: {0}".format(res)
         self._page.update()
 

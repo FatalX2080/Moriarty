@@ -1,8 +1,8 @@
 import flet as ft
-from gui.ui import Win
+import gui
 
 def main(page: ft.Page):
-    win = Win(page)
+    win = gui.Win(page)
 
     page.add(win.get_win())
 
