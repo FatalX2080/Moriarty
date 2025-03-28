@@ -16,6 +16,7 @@ class Task1:
         self.y = int(self.values[1], self.system)
 
     def __from_decimal(self, result):
+        self.res = ''
         while result >= self.system:
             self.res += str(result % self.system)
             result //= self.system

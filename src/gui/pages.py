@@ -1,22 +1,21 @@
 import flet as ft
+from .navigate import BottomBar
 import tests
 
+
 class BasePage:
+    win = None
+    page_list = None
+    __instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
+
     def __init__(self):
-        self._page = None
-
-        nav = ft.NavigationDrawerDestination
-        navigate_list = [nav(label="Home", icon=ft.Icons.HOME)]
-        nv_list = navigate_list + [nav(label="Test {0}".format(index)) for index in range(1, 14)]
-        self.navigation = ft.NavigationDrawer(controls=nv_list)
-
-    def open_navigate(self, e):
-        e.control.page.drawer = self.navigation
-        self.navigation.open = True
-        e.control.page.update()
-
-    def set_switch_event(self, switch_func):
-        self.navigation.on_change = switch_func
+        bar = BottomBar(BasePage.win, BasePage.page_list)
+        self.bottom_bar = bar.NavBar
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -25,13 +24,14 @@ class Page0(BasePage):
         super().__init__()
         self._page = self.pinit()
 
-    def render(self, g):
-        g().alignment = ft.alignment.center
-        g().content = self._page
+    def render(self):
+        BasePage.win.alignment = ft.alignment.center
+        BasePage.win.content = self._page
 
     def pinit(self):
-        return ft.Column([
-            ft.ElevatedButton("Open end drawer", on_click=self.open_navigate),
+        return ft.Column(controls=[
+            ft.Text("Template"),
+            self.bottom_bar
         ])
 
 
@@ -68,11 +68,11 @@ class Page1(BasePage):
             self.sign,
             self.res_text,
             ft.Button(text="Evaluate", on_click=self.process),
-            ft.Button(text="Home", icon=ft.icons.HOME, on_click=self.open_navigate),
+            self.bottom_bar
         ])
 
-    def render(self, g):
-        g().content = self._page
+    def render(self):
+        BasePage.win.content = self._page
 
     # ------------------------------------------------------------------------------------------------------
     def process(self, e):
@@ -80,7 +80,6 @@ class Page1(BasePage):
         assert self.check()
         self.data["base"] = int(self.data["base"])
         res = self.test.process(self.data["op"], self.data["values"], self.data["base"])
-        # TODO Старый текст не очищается
         self.res_text.value = "Result: {0}".format(res)
         self._page.update()
 
@@ -91,15 +90,20 @@ class Page1(BasePage):
 
     def check(self) -> bool:
         try:
-            if self.data["values"][0] == "":
+            v1 = self.data["values"][0]
+            v2 = self.data["values"][1]
+            b = self.data["base"]
+            if v1 == "":
                 return False
-            if self.data["values"][1] == "":
+            if v2 == "":
                 return False
-            if self.data["base"] == "":
+            if b == "":
                 return False
-            int(self.data["values"][0])
-            int(self.data["values"][1])
-            int(self.data["base"])
+            int(v1)
+            int(v2)
+            int(v2)
+            if max(v1) >= b or max(v2) >= b:
+                return False
         except ValueError:
             return False
         return True
