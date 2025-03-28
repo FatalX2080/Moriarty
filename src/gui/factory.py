@@ -1,4 +1,4 @@
-from .pages import Page0, Page1, BasePage
+from .pages import Page0, Page1, Page2, BasePage
 
 
 class Factory:
@@ -16,6 +16,7 @@ class Factory:
 
         self._pages_list.append(Page0())
         self._pages_list.append(Page1())
+        self._pages_list.append(Page2())
 
     def get_list(self) -> list:
         return self._pages_list

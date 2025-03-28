@@ -95,12 +95,14 @@ class Page1(BasePage):
         )
         return cont(content=main_col, expand=True)
 
+    # ------------------------------------------------------------------------------------------------------
+
     def process(self, e):
         self.read()
         assert self.check()
         self.data["base"] = int(self.data["base"])
         res = self.test.process(self.data["op"], self.data["values"], self.data["base"])
-        self.res_text.value = "Result: {0}".format(res)
+        self.res_text.value = "Result {0}".format(res)
         self._page.update()
 
     def read(self):
@@ -124,6 +126,103 @@ class Page1(BasePage):
             int(v2)
             if max(v1) >= b or max(v2) >= b:
                 return False
+        except ValueError:
+            return False
+        return True
+
+
+class Page2(BasePage):
+    def __init__(self):
+        super().__init__()
+        self.data = {}
+        self.test = tests.Task2()
+
+        self.num = ft.TextField(label="Number")
+        self.baseX = ft.TextField(label="Base x")
+        self.baseAns = ft.TextField(label="Base ans")
+        self.lgX = ft.TextField(label="Lg x")
+        self.lgAns = ft.TextField(label="Lg ans")
+
+        self.len_text = ft.Text("Fract len", weight=ft.FontWeight.BOLD)
+        self.res_text = ft.Text("Result", weight=ft.FontWeight.BOLD)
+        self.res_text.spans.append(ft.TextSpan(style=ft.TextStyle(size=9)))
+
+        self._page = self.pinit()
+
+    def pinit(self):
+        cont = ft.Container
+        col = ft.Column
+        row = ft.Row
+
+        c1 = cont(
+            content=ft.Text("Test 2", theme_style=ft.TextThemeStyle.DISPLAY_LARGE),
+            alignment=ft.alignment.center,
+            expand=True,
+        )
+
+        num_row = row(controls=[self.num], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+        res_row = row(
+            controls=[self.len_text, ft.Button(text="Evaluate", on_click=self.process)],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+
+        task_content = [
+            num_row,
+            self.baseX,
+            self.baseAns,
+            self.lgX,
+            self.lgAns,
+            ft.Divider(height=1),
+            res_row,
+            self.res_text
+        ]
+        top_part = cont(col([cont(c1), cont(col(task_content))]))
+        bottom_part = cont(self.bottom_bar)
+
+        main_col = col(controls=[top_part, bottom_part], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+        return cont(content=main_col, expand=True)
+
+    # ------------------------------------------------------------------------------------------------------
+
+    def process(self, e):
+        self.read()
+        assert self.check()
+        self.data["base_x"] = int(self.data["base_x"])
+        self.data["base_ans"] = int(self.data["base_ans"])
+        self.data["lg_x"] = float(self.data["lg_x"])
+        self.data["lg_ans"] = float(self.data["lg_ans"])
+        res = self.test.process(
+            self.data["x"],
+            self.data["base_x"],
+            self.data["base_ans"],
+            self.data["lg_x"],
+            self.data["lg_ans"]
+        )
+        self.len_text.value = "Fract len {0} -> {1}".format(res[0], res[1])
+        self.res_text.value = "Result {0}".format(res[3][0])
+        self.res_text.spans[0].text = "{0}".format(res[2])
+        self._page.update()
+
+    def read(self):
+        self.data["x"] = self.num.value
+        self.data["base_x"] = self.baseX.value
+        self.data["base_ans"] = self.baseAns.value
+        self.data["lg_x"] = self.lgX.value
+        self.data["lg_ans"] = self.lgAns.value
+
+    def check(self) -> bool:
+        try:
+            x = self.data["x"]
+            base_x = self.data["base_x"]
+            base_ans = self.data["base_ans"]
+            lg_x = self.data["lg_x"]
+            lg_ans = self.data["lg_ans"]
+            if any([i == '' for i in [x, base_x, base_ans, lg_x, lg_ans]]):
+                return False
+            int(base_x)
+            int(base_ans)
+            float(lg_x)
+            float(lg_ans)
         except ValueError:
             return False
         return True
