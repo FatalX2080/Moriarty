@@ -15,9 +15,8 @@ class Win:
         self.page.window.width = base_size[1] // skale
         #                               ------!TEST!------
 
-        self._win = ft.Container()
-        factory = Factory(self.get_win)
-        self.pages_list = factory.get_list()
+        self._win = ft.Container(expand=True)
+        self.pages_list = Factory(self.get_win).get_list()
 
         self.pages_list[0].render()
         self.page.update()

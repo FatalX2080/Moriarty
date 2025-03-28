@@ -16,23 +16,24 @@ class BasePage:
     def __init__(self):
         bar = BottomBar(BasePage.win, BasePage.page_list)
         self.bottom_bar = bar.NavBar
+        self._page = None
+
+    def render(self):
+        BasePage.win.content = self._page
 
 
 # ----------------------------------------------------------------------------------------------------------
+
 class Page0(BasePage):
     def __init__(self):
         super().__init__()
         self._page = self.pinit()
 
-    def render(self):
-        BasePage.win.alignment = ft.alignment.center
-        BasePage.win.content = self._page
-
     def pinit(self):
-        return ft.Column(controls=[
-            ft.Text("Template"),
-            self.bottom_bar
-        ])
+        return ft.Column(
+            controls=[ft.Text("Template"), self.bottom_bar],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
 
 
 class Page1(BasePage):
@@ -42,39 +43,58 @@ class Page1(BasePage):
         self.test = tests.Task1()
 
         self.sign = ft.RadioGroup(
-            content=ft.Column(
+            content=ft.Row(
                 [
-                    ft.Radio(value="+", label="+"),
-                    ft.Radio(value="-", label="-"),
-                    ft.Radio(value="*", label="*"),
-                    ft.Radio(value="/", label="/"),
-                ]
-            ), value="+"
+                    ft.Container(
+                        ft.Radio(value=opt, label=opt),
+                        expand=True,
+                        alignment=ft.alignment.center,
+                    )
+                    for opt in ["+", "-", "*", "//"]
+                ],
+                expand=True,
+            ),
+            value="+",
         )
-        self.val1_field = ft.TextField(label="Num 1")
-        self.val2_field = ft.TextField(label="Num 2")
+        self.val1_field = ft.TextField(label="Operand 1")
+        self.val2_field = ft.TextField(label="Operand 2")
         self.base_field = ft.TextField(label="Base")
-        self.res_text = ft.Text("Result")
+        self.res_text = ft.Text("Result", weight=ft.FontWeight.BOLD)
 
         self._page = self.pinit()
 
     def pinit(self):
-        return ft.Column([
-            ft.Text("Test 1", theme_style=ft.TextThemeStyle.DISPLAY_LARGE),
+        cont = ft.Container
+        col = ft.Column
+        row = ft.Row
+
+        c1 = cont(
+            content=ft.Text("Test 1", theme_style=ft.TextThemeStyle.DISPLAY_LARGE),
+            alignment=ft.alignment.center,
+            expand=True,
+        )
+        res_row = row(
+            controls=[self.res_text, ft.Button(text="Evaluate", on_click=self.process)],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+        task_content = [
             self.val1_field,
             self.val2_field,
             self.base_field,
             ft.Text("Operation"),
             self.sign,
-            self.res_text,
-            ft.Button(text="Evaluate", on_click=self.process),
-            self.bottom_bar
-        ])
+            ft.Divider(height=1),
+            res_row
+        ]
+        top_part = cont(col([cont(c1), cont(col(task_content))]))
+        bottom_part = cont(self.bottom_bar)
 
-    def render(self):
-        BasePage.win.content = self._page
+        main_col = col(
+            controls=[top_part, bottom_part],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+        return cont(content=main_col, expand=True)
 
-    # ------------------------------------------------------------------------------------------------------
     def process(self, e):
         self.read()
         assert self.check()

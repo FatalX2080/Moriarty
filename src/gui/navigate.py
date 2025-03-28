@@ -52,8 +52,11 @@ class BottomBar:
             dest(icon=ft.Icons.HOME, label="Menu"),
             dest(icon=ft.Icons.INFO, label="Test info"),
         ]
-        bar = ft.NavigationBar(destinations=nav_bar_buttons, on_change=self.event)
-        self.NavBar = ft.Pagelet(navigation_bar=bar, content=ft.Container(), height=300, )
+        bar = ft.CupertinoNavigationBar(
+            destinations=nav_bar_buttons,
+            on_change=self.event,
+        )
+        self.NavBar = ft.Pagelet(navigation_bar=bar, content=ft.Container(), height=50)
 
     def event(self, e=None):
         iex = e.control.selected_index
