@@ -70,3 +70,4 @@ class BottomBar:
         e.control.page.drawer = self.menu.NavDraw
         self.menu.NavDraw.open = True
         e.control.page.update()
+
