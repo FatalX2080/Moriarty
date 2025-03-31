@@ -1,9 +1,12 @@
 from itertools import product
-
+import string
 
 class Task3:
     def __init__(self):
         self.functions = ['', '']  # SKNF / SDNF
+
+    def reset(self):
+        self.functions = ['', '']
 
     def process(self, x: int, f_values: tuple) -> tuple:
         """
@@ -11,7 +14,8 @@ class Task3:
         :param f_values: tuple of function values
         :return: (SDNF, SKNF)
         """
-        a = 'abcd'
+        self.reset()
+        a = string.ascii_lowercase
         variables_set = product((0, 1), repeat=x)
         for i, item in enumerate(variables_set):
             self.functions[f_values[i]] += '('
@@ -25,4 +29,5 @@ class Task3:
 
 if __name__ == '__main__':
     t = Task3()
+    print(t.process(3, (0, 1, 0, 0, 1, 0, 1, 0)))
     print(t.process(3, (0, 1, 0, 0, 1, 0, 1, 0)))

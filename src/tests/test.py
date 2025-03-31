@@ -11,3 +11,6 @@ class Supportive:
 
     def get_logs(self):
         return self.__logs
+
+    def reset(self):
+        self.__logs = []

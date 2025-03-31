@@ -8,7 +8,8 @@ authors = [
     { name = "FatalX2080", email = "maks.belozerov.06@yandex.ru" }
 ]
 dependencies = [
-  "flet==0.27.6"
+  "flet==0.27.6",
+  "numpy==1.26.4"
 ]
 
 [tool.flet]

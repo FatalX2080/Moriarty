@@ -31,6 +31,7 @@ class Task2(Supportive):
         :param lg_ans: log ans
         :return: (digits after point, new digits after point, base, answer)
         """
+        self.reset()
         n1 = len(x.split('.')[1]) if "." in x else 0
         number_count = floor(n1 * float(lg_x) / float(lg_ans)) + 1
         answer_dec = self.__convert_float(x, base_x)
@@ -54,4 +55,5 @@ class Task2(Supportive):
 
 if __name__ == '__main__':
     t = Task2()
+    print(t.process('110101001.0101110010', 2, 5, 0.3010, 0.6990))
     print(t.process('110101001.0101110010', 2, 5, 0.3010, 0.6990))
