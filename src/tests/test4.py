@@ -1,5 +1,5 @@
 # BETTA
-
+# TODO пока только для СДНФ
 import string
 
 
@@ -165,6 +165,11 @@ class Task4:
         self.new_gen.clear()
 
     def process(self, x: int, f_values: tuple):
+        """
+        :param x: count of variables
+        :param f_values: tuples of stings 10 base func values
+        :return: MDNF
+        """
         self.reset()
         # --------------------------------------------------------------------------------------------------
         columns = self._stage0(x, f_values)

@@ -1,4 +1,4 @@
-from .pages import BasePage, Page0, Page1, Page2, Page3
+from .pages import BasePage, Page0, Page1, Page2, Page3, Page4
 
 
 class Factory:
@@ -14,10 +14,13 @@ class Factory:
         BasePage.win = get_win()
         BasePage.page_list = self._pages_list
 
-        self._pages_list.append(Page0())
-        self._pages_list.append(Page1())
-        self._pages_list.append(Page2())
-        self._pages_list.append(Page3())
+        self._pages_list += [
+            Page0(),
+            Page1(),
+            Page2(),
+            Page3(),
+            Page4(),
+        ]
 
     def get_list(self) -> list:
         return self._pages_list
