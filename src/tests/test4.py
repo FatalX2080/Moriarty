@@ -4,53 +4,63 @@ import string
 
 
 class TableProcessor:
-    def __init__(self, t, c, r):
-        self.t = t
+    def __init__(self, table, column, row):
+        self.t = table
         self.t_size = (len(self.t), len(self.t[0]))
-        self.rows = r
-        self.columns = c
+        self.rows = row
+        self.columns = column
 
         self.c_col = [0] * self.t_size[1]
         self.c_row = [0] * self.t_size[0]
 
+    # ------------------------------------------------------------------------------------------------------
     def gen_col(self, c_iex) -> list:
         return [self.t[r][c_iex] for r in range(self.t_size[0])]
 
-    def recurrent_activation(self):
-        success = False
-        while success:
-            success = False
-            for c in range(self.t_size[1]):
-                if self.c_col[c] == 0:
-                    col = self.gen_col(c)
-                    assert sum(col) != 0
-                    one_cords = [r for r in range(self.t_size[0]) if col[r]]
-                    one_usages = [sum(self.t[one_cords[r]]) for r in range(len(one_cords))]
-                    used_row = one_cords[one_usages.index(max(one_usages))]
-                    self.c_row[used_row] = 1
-                    self.activate_rows()
-                    success = True
-
     def activate_rows(self):
         for r in range(self.t_size[0]):
-            if self.c_row[r] == 1:
+            if self.c_row[r]:
                 for c in range(self.t_size[1]):
-                    if self.t[r][c] == 1: self.c_col[c] = 1
+                    self.c_col[c] |= self.t[r][c]
                 self.t[r] = [0] * self.t_size[1]
 
-    def process(self) -> list:
-        m = self.t_size[1]
+    def get_the_used(self) -> list:
+        return [self.rows[i] for i in range(self.t_size[0]) if self.c_row[i]]
 
-        for c in range(m):
+    # ------------------------------------------------------------------------------------------------------
+    def recurrent_function(self) -> bool:
+        success = False
+        for c in range(self.t_size[1]):
+            if self.c_col[c]: continue
+
+            col = self.gen_col(c)
+            assert sum(col) != 0
+            one_cords = [r for r in range(self.t_size[0]) if col[r]]
+            one_usages = [sum(self.t[one_cords[r]]) for r in range(len(one_cords))]
+            used_row = one_cords[one_usages.index(max(one_usages))]
+            self.c_row[used_row] = 1
+            self.activate_rows()
+            success = True
+        return success
+
+    # ------------------------------------------------------------------------------------------------------
+    def cyclic_activation(self):
+        m = self.t_size[1]
+        while (sum(self.c_col) != m) and (self.recurrent_function()): pass
+
+    def linear_activation(self):
+        for c in range(self.t_size[1]):
             col = self.gen_col(c)
             if sum(col) == 1:
                 iex = col.index(1)
                 self.c_row[iex] = 1
                 self.c_col[c] = 1
-
         self.activate_rows()
-        if sum(self.c_col) != m: self.recurrent_activation()
-        return [self.rows[i] for i in range(self.t_size[0]) if self.c_row[i]]
+
+    def process(self) -> list:
+        self.linear_activation()
+        self.cyclic_activation()
+        return self.get_the_used()
 
 
 class Task4:
@@ -170,5 +180,6 @@ class Task4:
 
 if __name__ == "__main__":
     mytest = Task4()
-    print(mytest.process(3, ("1", "7")))
-    print(mytest.process(3, ("1", "0")))
+    print(mytest.process(3, ("1", "7")))  # (!a*!b*c)+(a*b*c)
+    print(mytest.process(3, ("1", "0")))  # (!a*!b)
+    print(mytest.process(4, ('9', '11', '12', '14', '15')))  # (a*b*!d)+(a*!b*d)+(a*c*d)
