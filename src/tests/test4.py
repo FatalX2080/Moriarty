@@ -88,7 +88,7 @@ class TableProcessor:
         self.c_row = None
 
 
-class Test4:
+class Task4:
     def __init__(self):
         self.gluing_flag = True
         self.elements = 0
