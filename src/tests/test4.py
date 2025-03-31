@@ -1,5 +1,5 @@
-# N = int(input("variables count: "))
-# func_result = input("f res: ").split()
+# BETTA
+
 import string
 
 
@@ -31,11 +31,7 @@ class TableProcessor:
         for c in range(m):
             if self.c_col[c] == 0:
                 col = self.gen_col(c)
-                try:
-                    assert sum(col) != 0
-                except AssertionError:
-                    print(func_result)
-                    raise Exception
+                assert sum(col) != 0
                 one_indexes = [r for r in range(n) if col[r]]
                 full_count = [0] * len(one_indexes)
                 for r in range(len(one_indexes)):
@@ -139,7 +135,7 @@ class Test4:
                             gen_mask[iex + 1][b2_iex] = 1
 
             if any([_ for _ in self.new_gen]):
-                for i in range(x+1):
+                for i in range(x + 1):
                     for j in range(len(gen_mask[i])):
                         if not gen_mask[i][j]:
                             v = self.gen[i][j]
@@ -211,12 +207,5 @@ class Test4:
 
 if __name__ == "__main__":
     mytest = Test4()
-    N = 5
-    a = [str(i) for i in range(2 ** N)]
-
-    from itertools import product
-
-    for test in list(product((0, 1), repeat=2 **N)):
-        func_result = tuple([a[_] for _ in range(2 **N) if test[_]])
-        if func_result:
-            mytest.process(N, func_result)
+    print(mytest.process(3, ("1", "7")))
+    print(mytest.process(3, ("1", "0")))
