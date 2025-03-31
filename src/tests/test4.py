@@ -69,6 +69,9 @@ class Task4:
         self.elements = 0
         self.gen = []
         self.new_gen = []
+        self.columns = []
+
+    # ------------------------------------------------------------------------------------------------------
 
     def __merge(self, b1, b2) -> bool:
         b3 = ""
@@ -89,18 +92,33 @@ class Task4:
             return True
         return False
 
-    def __compare(self, b1, b2) -> bool:
-        for el in range(self.elements):
-            if b1[el] + b2[el] in ["10", "01"]: return False
-        return True
+    def __compare(self, b1, b2) -> int:
+        bad_values = [("1", "0"), ("0", "1")]
+        res = any([pair in bad_values for pair in zip(b1, b2)])
+        return int(not res)
+
+    def __gen_empty_list(self, l):
+        return [[] for _ in range(l)]
+
+    def __gen_mask_list(self, l):
+        return [[0] * len(self.gen[_]) for _ in range(l + 1)]
+
+    # ------------------------------------------------------------------------------------------------------
+    def _stage0(self, x, f_values) -> list:
+        columns = [bin(int(i))[2:].zfill(x) for i in f_values]
+        self.elements = x
+        self.gen = [[] for _ in range(x + 1)]
+        for el in columns:
+            self.gen[el.count("1")].append(el)
+        return columns
 
     def _stage1(self, x):
         final_gen = []
 
         while self.gluing_flag:
             self.gluing_flag = False
-            self.new_gen = [[] for _ in range(x)]
-            gen_mask = [[0] * len(self.gen[_]) for _ in range(x + 1)]
+            self.new_gen = self.__gen_empty_list(x)
+            gen_mask = self.__gen_mask_list(x)
             for iex in range(x):
                 for b1_iex, b1 in enumerate(self.gen[iex]):
                     for b2_iex, b2 in enumerate(self.gen[iex + 1]):
@@ -108,12 +126,10 @@ class Task4:
                             gen_mask[iex][b1_iex] = 1
                             gen_mask[iex + 1][b2_iex] = 1
 
-            if any([_ for _ in self.new_gen]):
+            if any(self.new_gen):
                 for i in range(x + 1):
                     for j in range(len(gen_mask[i])):
-                        if not gen_mask[i][j]:
-                            v = self.gen[i][j]
-                            final_gen.append(v)
+                        if not gen_mask[i][j]: final_gen.append(self.gen[i][j])
                 self.gen = [list(set(r)) for r in self.new_gen]
                 x -= 1
 
@@ -123,55 +139,40 @@ class Task4:
 
         return final_gen
 
-    def _stage2(self, row, cols) -> list:
-        n = len(cols)
+    def _stage2(self, row, columns) -> list:
+        n = len(columns)
         m = len(row)
+        adjacency_table = [[self.__compare(columns[j], row[i]) for j in range(n)] for i in range(m)]
+        return adjacency_table
 
-        t = [[0] * n for _ in range(m)]
-        for i in range(m):
-            for j in range(n):
-                t[i][j] = int(self.__compare(cols[j], row[i]))
-
-        return t
-
-    def _stage3(self, r) -> str:
+    def _stage3(self, rows) -> str:
         res = ""
         alph = string.ascii_lowercase
-        for block in r:
+        for block in rows:
             temp = "("
             i = 0
             for el in block:
-                if el != "-":
-                    if el == "0":
-                        temp += "!"
-                    temp += alph[i] + "*"
+                if el != "-":  temp += "!" * (el == "0") + alph[i] + "*"
                 i += 1
-            temp = temp[:-1] + ")+"
-            res += temp
-        if res[:-1] != ')':
-            return res[:-1]
-        else:
-            return "VOID"
+            res += temp[:-1] + ")+"
+        return res[:-1] if res[:-1] != ')' else "VOID"
 
     def reset(self):
         self.gluing_flag = True
         self.elements = 0
-        self.gen = []
-        self.new_gen = []
+        self.gen.clear()
+        self.columns.clear()
+        self.new_gen.clear()
 
     def process(self, x: int, f_values: tuple):
         self.reset()
-        columns = [bin(int(i))[2:].zfill(x) for i in f_values]
-        self.elements = x
-        self.gen = [[] for _ in range(x + 1)]
-        for el in columns:
-            self.gen[el.count("1")].append(el)
         # --------------------------------------------------------------------------------------------------
+        columns = self._stage0(x, f_values)
         rows = self._stage1(x)
         table = self._stage2(rows, columns)
         # --------------------------------------------------------------------------------------------------
-        tPr = TableProcessor(table, columns, rows)
-        res_rows = tPr.process()
+        tp = TableProcessor(table, columns, rows)
+        res_rows = tp.process()
         # --------------------------------------------------------------------------------------------------
         ans = self._stage3(res_rows)
 
@@ -179,7 +180,15 @@ class Task4:
 
 
 if __name__ == "__main__":
-    mytest = Task4()
-    print(mytest.process(3, ("1", "7")))  # (!a*!b*c)+(a*b*c)
-    print(mytest.process(3, ("1", "0")))  # (!a*!b)
-    print(mytest.process(4, ('9', '11', '12', '14', '15')))  # (a*b*!d)+(a*!b*d)+(a*c*d)
+    t = Task4()
+
+    req1 = t.process(3, ("1", "7"))
+    req2 = t.process(3, ("1", "0"))
+    req3 = t.process(4, ('9', '11', '12', '14', '15'))
+
+    print(req1)  # (!a*!b*c)+(a*b*c)
+    print(req2)  # (!a*!b)
+    print(req3)  # (a*!b*d)+(a*b*!d)+(a*c*d)
+
+    assert req1 == "(!a*!b*c)+(a*b*c)"
+    assert req2 == "(!a*!b)"
