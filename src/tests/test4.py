@@ -4,65 +4,41 @@ import string
 
 
 class TableProcessor:
-    def __init__(self):
-        self.t = None
-        self.t_size = ()
-        self.rows = None
-        self.columns = None
-
-        self.c_col = None
-        self.c_row = None
-
-    def set_params(self, t, c, r):
+    def __init__(self, t, c, r):
         self.t = t
-        self.columns = c
-        self.rows = r
         self.t_size = (len(self.t), len(self.t[0]))
-        self.c_row = [0] * self.t_size[0]
+        self.rows = r
+        self.columns = c
+
         self.c_col = [0] * self.t_size[1]
+        self.c_row = [0] * self.t_size[0]
 
     def gen_col(self, c_iex) -> list:
         return [self.t[r][c_iex] for r in range(self.t_size[0])]
 
-    def recurrent_activation(self) -> bool:
-        n = self.t_size[0]
-        m = self.t_size[1]
+    def recurrent_activation(self):
         success = False
-        for c in range(m):
-            if self.c_col[c] == 0:
-                col = self.gen_col(c)
-                assert sum(col) != 0
-                one_indexes = [r for r in range(n) if col[r]]
-                full_count = [0] * len(one_indexes)
-                for r in range(len(one_indexes)):
-                    full_count[r] = sum(self.t[one_indexes[r]])
-
-                used_row = one_indexes[full_count.index(max(full_count))]
-                self.c_row[used_row] = 1
-                self.activate_rows()
-                success = True
-
-        return success
+        while success:
+            success = False
+            for c in range(self.t_size[1]):
+                if self.c_col[c] == 0:
+                    col = self.gen_col(c)
+                    assert sum(col) != 0
+                    one_cords = [r for r in range(self.t_size[0]) if col[r]]
+                    one_usages = [sum(self.t[one_cords[r]]) for r in range(len(one_cords))]
+                    used_row = one_cords[one_usages.index(max(one_usages))]
+                    self.c_row[used_row] = 1
+                    self.activate_rows()
+                    success = True
 
     def activate_rows(self):
-        n = self.t_size[0]
-        m = self.t_size[1]
-
-        for r in range(n):
-            if self.c_row[r] == 1:
-                for c in range(m):
-                    if self.t[r][c] == 1:
-                        self.c_col[c] = 1
-
-        self.clear_row()
-
-    def clear_row(self):
         for r in range(self.t_size[0]):
             if self.c_row[r] == 1:
+                for c in range(self.t_size[1]):
+                    if self.t[r][c] == 1: self.c_col[c] = 1
                 self.t[r] = [0] * self.t_size[1]
 
-    def process(self):
-        n = self.t_size[0]
+    def process(self) -> list:
         m = self.t_size[1]
 
         for c in range(m):
@@ -73,19 +49,8 @@ class TableProcessor:
                 self.c_col[c] = 1
 
         self.activate_rows()
-        if sum(self.c_col) != m:
-            while self.recurrent_activation(): pass
-
-        return [self.rows[i] for i in range(n) if self.c_row[i]]
-
-    def reset(self):
-        self.t = None
-        self.t_size = ()
-        self.rows = None
-        self.columns = None
-
-        self.c_col = None
-        self.c_row = None
+        if sum(self.c_col) != m: self.recurrent_activation()
+        return [self.rows[i] for i in range(self.t_size[0]) if self.c_row[i]]
 
 
 class Task4:
@@ -94,7 +59,6 @@ class Task4:
         self.elements = 0
         self.gen = []
         self.new_gen = []
-        self.tProcessor = TableProcessor()
 
     def __merge(self, b1, b2) -> bool:
         b3 = ""
@@ -184,7 +148,6 @@ class Task4:
         self.elements = 0
         self.gen = []
         self.new_gen = []
-        self.tProcessor.reset()
 
     def process(self, x: int, f_values: tuple):
         self.reset()
@@ -197,8 +160,8 @@ class Task4:
         rows = self._stage1(x)
         table = self._stage2(rows, columns)
         # --------------------------------------------------------------------------------------------------
-        self.tProcessor.set_params(table, columns, rows)
-        res_rows = self.tProcessor.process()
+        tPr = TableProcessor(table, columns, rows)
+        res_rows = tPr.process()
         # --------------------------------------------------------------------------------------------------
         ans = self._stage3(res_rows)
 
@@ -206,6 +169,6 @@ class Task4:
 
 
 if __name__ == "__main__":
-    mytest = Test4()
+    mytest = Task4()
     print(mytest.process(3, ("1", "7")))
     print(mytest.process(3, ("1", "0")))
