@@ -5,6 +5,7 @@ import tests
 
 class BasePage:
     win = None
+    win_size = None
     page_list = None
     __instance = None
 
@@ -17,6 +18,7 @@ class BasePage:
         bar = BottomBar(BasePage.win, BasePage.page_list)
         self.bottom_bar = bar.NavBar
         self._page = None
+        self.win = BasePage.win
 
     def render(self):
         BasePage.win.content = self._page
@@ -338,6 +340,74 @@ class Page4(TaskBasePage):
                 return False
             if any([int(r) >= 2 ** int(x) or int(r) < 0 for r in res.split()]):
                 return False
+        except ValueError:
+            return False
+        return True
+
+
+class Page7(TaskBasePage):
+    def __init__(self):
+        super().__init__()
+        self.index = 7
+        self.data = {}
+        self.test = tests.Task7()
+
+        self.num = ft.TextField(label="Number")
+        self.np = ft.TextField(label="n(п)")
+        self.nm = ft.TextField(label="n(m)")
+
+        self.view = ft.Column(
+            scroll=ft.ScrollMode.ALWAYS,
+            width=self.win_size[0],
+            height=self.win_size[1] * 0.5,
+            spacing=10,
+        )
+        self._page = self.pinit()
+
+    def pinit(self):
+        res_row = ft.Row(
+            controls=[ft.Button(text="Evaluate", on_click=self.process)],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+        task_content = [
+            self.num,
+            self.np,
+            self.nm,
+            ft.Divider(height=1),
+            res_row,
+            self.view,
+        ]
+        top_part = self.join_top(task_content)
+        return self.join_page(top_part)
+
+    # ------------------------------------------------------------------------------------------------------
+
+    def process(self, e):
+        self.read({"number": self.num, "p": self.np, "m": self.nm})
+        assert self.check()
+        self.data["p"] = int(self.data["p"])
+        self.data["m"] = int(self.data["m"])
+        res = self.test.process(*self.data.values())
+
+        self.view.controls.clear()
+        result_text = ft.Text(
+            value="\n".join(res),
+            selectable=True,
+            size=14,
+        )
+        self.view.controls.append(result_text)
+
+        self._page.update()
+
+    def check(self) -> bool:
+        try:
+            x = self.data["number"]
+            p = self.data["p"]
+            m = self.data["m"]
+            if x == '' or p == '' or m == '': return False
+            float(x)
+            int(p)
+            int(m)
         except ValueError:
             return False
         return True
