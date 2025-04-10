@@ -366,7 +366,7 @@ class Page7(TaskBasePage):
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[ft.Button(text="Evaluate", on_click=self.process)],
+            controls=[ft.Text(""), ft.Button(text="Evaluate", on_click=self.process)],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
         task_content = [
