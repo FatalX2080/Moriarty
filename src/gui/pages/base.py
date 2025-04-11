@@ -4,6 +4,7 @@ from ..navigate import BottomBar
 
 from tests.test5 import addressing
 
+
 class BasePage:
     win = None
     win_size = None
@@ -123,17 +124,77 @@ class TableDraftsman:
 
         self.base += digits
 
+    def draw_cube(self, cube, color) -> list:
+        OFFSET = 0.15
+        paint = ft.Paint(color=color, stroke_width=2, style=ft.PaintingStyle.STROKE)
+        line = cv.Line
+        """
+        @ @ @ @ 0 0
+        @ @ @ @ 0 0
+        @ @ @ @ 0 0
+        @ @ @ @ 0 0
+        0 0 0 0 0 0
+        0 0 0 0 0 0
+        """
+        x0 = cube[1]
+        y0 = cube[0]
+
+        x1 = x0 + cube[2][1]
+        y1 = y0 + cube[2][0]
+
+        lines = []
+        if x1 <= 4 and y1 <= 4:
+            coords = [
+                [(x0 + OFFSET), (y0 + OFFSET), (x1 - OFFSET), (y0 + OFFSET)],  # -
+                [(x0 + OFFSET), (y0 + OFFSET), (x0 + OFFSET), (y1 - OFFSET)],  # |
+                [(x1 - OFFSET), (y0 + OFFSET), (x1 - OFFSET), (y1 - OFFSET)],  # |
+                [(x0 + OFFSET), (y1 - OFFSET), (x1 - OFFSET), (y1 - OFFSET)]  # _
+            ]
+        elif x1 > 4 and y1 <= 4:
+            coords = [
+                [(x0 + OFFSET), (y0 + OFFSET), 4, (y0 + OFFSET)],
+                [(x0 + OFFSET), (y0 + OFFSET), (x0 + OFFSET), (y1 - OFFSET)],
+                [(x0 + OFFSET), (y1 - OFFSET), 4, (y1 - OFFSET)],
+
+                [0, (y0 + OFFSET), (x1 - 4 - OFFSET), (y0 + OFFSET)],
+                [(x1 - 4 - OFFSET), (y0 + OFFSET), (x1 - 4 - OFFSET), (y1 - OFFSET)],
+                [0, (y1 - OFFSET), (x1 - 4 - OFFSET), (y1 - OFFSET)]
+            ]
+        elif x1 <= 4 and y1 > 4:
+            coords = [
+                [(x0 + OFFSET), (y0 + OFFSET), (x1 - OFFSET), (y0 + OFFSET)],
+                [(x0 + OFFSET), (y0 + OFFSET), (x0 + OFFSET), 4],
+                [(x1 - OFFSET), (y0 + OFFSET), (x1 - OFFSET), 4],
+
+                [(x0 + OFFSET), (y1 - 4 - OFFSET), (x1 - OFFSET), (y1 - 4 - OFFSET)],
+                [(x0 + OFFSET), 0, (x0 + OFFSET), (y1 - 4 - OFFSET)],
+                [(x1 - OFFSET), 0, (x1 - OFFSET), (y1 - 4 - OFFSET)]
+            ]
+        else:
+            coords = [
+                [(x0 + OFFSET), (y0 + OFFSET), 4, (y0 + OFFSET)],
+                [(x0 + OFFSET), (y0 + OFFSET), (x0 + OFFSET), 4],
+
+                [0, (y0 + OFFSET), (x1 - 4 - OFFSET), (y0 + OFFSET)],
+                [(x1 - 4 - OFFSET), (y0 + OFFSET), (x1 - 4 - OFFSET), 4],
+
+                [(x0 + OFFSET), (y1 - 4 - OFFSET), 4, (y1 - 4 - OFFSET)],
+                [(x0 + OFFSET), 0, (x0 + OFFSET), (y1 - 4 - OFFSET)],
+
+                [0, (y1 - 4 - OFFSET), (x1 - 4 - OFFSET), (y1 - 4 - OFFSET)],
+                [(x1 - 4 - OFFSET), 0, (x1 - 4 - OFFSET), (y1 - 4 - OFFSET)]
+            ]
+
+        for c in coords: lines.append(line(*[cord * self.cell_size for cord in c], paint=paint))
+
+        return lines
+
     def draw_cubes(self):
         cubes = []
         colors = self.gen_colors()
-        rec = ft.Paint(color=ft.colors.BLACK, stroke_width=2, style=ft.PaintingStyle.STROKE)
         for iex, cube in enumerate(self.cubes):
-            rec.color = colors[iex]
-            start = ((cube[1] + 0.15) * self.cell_size, (cube[0] + 0.15) * self.cell_size)
-            size = ((cube[2][1] - 0.3) * self.cell_size, (cube[2][0] - 0.3) * self.cell_size)
-            cb = cv.Rect(*start, *size, paint=rec)
-            cubes.append(cb)
-
+            p_obj = self.draw_cube(cube, colors[iex])
+            cubes += p_obj
         self.base += cubes
 
     def draw(self) -> list:

@@ -16,6 +16,7 @@ class Page5(TaskBasePage):
         self.res = ft.TextField(label="Results f(x)")
 
         self.canvas = cv.Canvas(width=200, height=200)
+        self.SDNF_text = ft.Text("SDNF", weight=ft.FontWeight.BOLD)
 
         self._page = self.pinit()
 
@@ -29,6 +30,7 @@ class Page5(TaskBasePage):
             self.res,
             ft.Divider(height=1),
             res_row,
+            self.SDNF_text,
             self.canvas
         ]
         top_part = self.join_top(task_content)
@@ -41,10 +43,12 @@ class Page5(TaskBasePage):
         assert self.check()
         self.data["count"] = int(self.data["count"])
         self.data["res"] = list(sorted(self.data["res"].split()))
-        res = self.test.process(*self.data.values())
+        cubes, sdnf = self.test.process(*self.data.values())
 
-        self.draftsman.set_atr(self.data["res"], res, self.win_size)
+        self.draftsman.set_atr(self.data["res"], cubes, self.win_size)
         self.canvas.clean()
         self.canvas.shapes = self.draftsman.draw()
+
+        self.SDNF_text.value = "SDNF {0}".format(sdnf)
 
         self._page.update()

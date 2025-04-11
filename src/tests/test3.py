@@ -1,5 +1,5 @@
 from itertools import product
-import string
+from string import ascii_lowercase
 
 class Task3:
     def __init__(self):
@@ -15,7 +15,7 @@ class Task3:
         :return: (SDNF, SKNF)
         """
         self.reset()
-        a = string.ascii_lowercase
+        a = ascii_lowercase
         variables_set = product((0, 1), repeat=x)
         for i, item in enumerate(variables_set):
             self.functions[f_values[i]] += '('

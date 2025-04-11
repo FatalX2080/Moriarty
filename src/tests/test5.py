@@ -1,6 +1,13 @@
+# BETTA
+# TODO пока только для СДНФ
 import numpy as np
 
+try:
+    from test import AdjacencyTable, gen_SDNF
+except ModuleNotFoundError:
+    from .test import AdjacencyTable, gen_SDNF
 # ----------------------------------------------------------------------------------------------------------
+
 cubes = (
     (4, 4),
     (3, 3),
@@ -37,6 +44,25 @@ addressing = {
     "15": (1, 1),
 }
 
+letter_addresses = {
+    (0, 0): np.array([1, 1, 0, 0]),
+    (0, 1): np.array([1, 1, 0, 1]),
+    (0, 2): np.array([1, 0, 0, 1]),
+    (0, 3): np.array([1, 0, 0, 0]),
+    (1, 0): np.array([1, 1, 1, 0]),
+    (1, 1): np.array([1, 1, 1, 1]),
+    (1, 2): np.array([1, 0, 1, 1]),
+    (1, 3): np.array([1, 0, 1, 0]),
+    (2, 0): np.array([0, 1, 1, 0]),
+    (2, 1): np.array([0, 1, 1, 1]),
+    (2, 2): np.array([0, 0, 1, 1]),
+    (2, 3): np.array([0, 0, 1, 0]),
+    (3, 0): np.array([0, 1, 0, 0]),
+    (3, 1): np.array([0, 1, 0, 1]),
+    (3, 2): np.array([0, 0, 0, 1]),
+    (3, 3): np.array([0, 0, 0, 0])
+}
+
 
 # ----------------------------------------------------------------------------------------------------------
 class TableProcessor:
@@ -50,36 +76,36 @@ class TableProcessor:
         new_hash = self.get_hash()
 
         if hashes[0] != new_hash[0]:
-            self.table[0:2, 4:] = v
-            self.table[4:, 0:2] = v
-            self.table[4:, 4:] = v
+            self.table[:2, 4:] = self.table[:2, :2]
+            self.table[4:, :2] = self.table[:2, :2]
+            self.table[4:, 4:] = self.table[:2, :2]
 
         if hashes[1] != new_hash[1]:
-            self.table[4:, 2:4] = v
+            self.table[4:, 2:4] = self.table[:2, 2:4]
 
         if hashes[2] != new_hash[2]:
-            self.table[:2, :2] = v
-            self.table[4:, 0:2] = v
-            self.table[4:, 4:] = v
+            self.table[:2, :2] = self.table[:2, 4:]
+            self.table[4:, :2] = self.table[:2, 4:]
+            self.table[4:, 4:] = self.table[:2, 4:]
 
         if hashes[3] != new_hash[3]:
-            self.table[2:4, 4:] = v
+            self.table[2:4, 4:] = self.table[2:4, :2]
 
         if hashes[4] != new_hash[4]:
-            self.table[2:4, :2] = v
+            self.table[2:4, :2] = self.table[2:4, 4:]
 
         if hashes[5] != new_hash[5]:
-            self.table[0:2, 4:] = v
-            self.table[:2, :2] = v
-            self.table[4:, 4:] = v
+            self.table[0:2, 4:] = self.table[4:, :2]
+            self.table[:2, :2] = self.table[4:, :2]
+            self.table[4:, 4:] = self.table[4:, :2]
 
         if hashes[6] != new_hash[6]:
-            self.table[:2, 2:4] = v
+            self.table[:2, 2:4] = self.table[4:, 2:4]
 
         if hashes[7] != new_hash[7]:
-            self.table[0:2, 4:] = v
-            self.table[4:, 0:2] = v
-            self.table[:2, :2] = v
+            self.table[0:2, 4:] = self.table[4:, 4:]
+            self.table[4:, 0:2] = self.table[4:, 4:]
+            self.table[:2, :2] = self.table[4:, 4:]
 
     def get_hash(self):
         hashes = []
@@ -147,65 +173,35 @@ class Overlap(TableProcessor):
 
 
 class SequenceGeneration:
-    letter_addresses = {
-        (0, 0): np.array([1, 1, 0, 0]),
-        (0, 1): np.array([1, 1, 0, 1]),
-        (0, 2): np.array([1, 0, 0, 1]),
-        (0, 3): np.array([1, 0, 0, 0]),
-        (1, 0): np.array([1, 1, 1, 0]),
-        (1, 1): np.array([1, 1, 1, 1]),
-        (1, 2): np.array([1, 0, 1, 1]),
-        (1, 3): np.array([1, 0, 1, 0]),
-        (2, 0): np.array([0, 1, 1, 0]),
-        (2, 1): np.array([0, 1, 1, 1]),
-        (2, 2): np.array([0, 0, 1, 1]),
-        (2, 3): np.array([0, 0, 1, 0]),
-        (3, 0): np.array([0, 1, 0, 0]),
-        (3, 1): np.array([0, 1, 0, 1]),
-        (3, 2): np.array([0, 0, 0, 1]),
-        (3, 3): np.array([0, 0, 0, 0])
-    }
 
-    def __init__(self, mcubes):
+    def __init__(self, mcubes, fval):
         self.mcubes = mcubes
+        self.fval = fval
 
     def gen_bunch(self, mc) -> str:
         cube_letters = []
         x0, y0, mcube = mc
         for r in range(mcube[0]):
             for c in range(mcube[1]):
-                cube_letters.append(SequenceGeneration.letter_addresses[(x0 + r, y0 + c)])
+                cube_letters.append(letter_addresses[((x0 + r) % 4, (y0 + c) % 4)])
 
         columns = np.array(cube_letters).T
         flags = (np.any(columns, axis=1) == 0) + (np.all(columns, axis=1))
-        bunch = ["a", "b", "c", "d"]
-        for f in range(4):
-            if not flags[f]:
-                bunch[f] = ""
+        # a b c d
+        bunch = [str(cube_letters[0][f]) if flags[f] else "-" for f in range(4)]
+        return "".join(bunch)
 
-        for i in range(4):
-            if flags[i]:
-                if cube_letters[0][i] == 0:
-                    bunch[i] = "!" + bunch[i]
-        i = 0
-        while i != len(bunch):
-            if bunch[i] == "":
-                del bunch[i]
-            else:
-                i += 1
-
-        res = "*".join(bunch)
-        if res != "":
-            return "(" + res + ")"
-        return "1"
-
-    def process(self) -> str:
+    def process(self) -> tuple:
         res = []
 
         for mc in self.mcubes:
             bunch = self.gen_bunch(mc)
             res.append(bunch)
-        return "+".join(res)
+
+        columns = [bin(int(fv))[2:].zfill(4) for fv in self.fval]
+        t_processor = AdjacencyTable(columns, res)
+        ls = t_processor.process()
+        return columns, res, ls
 
 
 class Task5:
@@ -221,8 +217,13 @@ class Task5:
         self.table[:, 4:] = self.table[:, :2]
         self.table[4:, :2] = self.table[:2, :2]
 
+    def reset(self):
+        self.table = None
+
     # ------------------------------------------------------------------------------------------------------
     def process(self, n: int, func_values: tuple):
+        self.reset()
+
         self.create_table(func_values)
 
         cov_engine = Coverage(self.table)
@@ -231,18 +232,23 @@ class Task5:
         over_engine = Overlap(preliminary_list)
         usages = over_engine.process()
 
-        seq_engine = SequenceGeneration(usages)
-        seq = seq_engine.process()
+        seq_engine = SequenceGeneration(usages, func_values)
+        column, res, used_list = seq_engine.process()
 
-        return usages
+        ans = gen_SDNF(used_list)
+
+        return usages, ans
 
 
 # ----------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     t = Task5()
+    print(t.process(4, ("0", "4", "8")))
     print(t.process(4, ("1", "3", "5", "7", "11", "12", "13", "14", "15")))
+    print(t.process(4, ("1", "3", "5", "9", "10", "11", "13", "14", "15")))
     """"1 3 5 7 11 12 13 14 15"""
+    """"1 3 5 9 10 11 13 14 15"""
     """
     1 1 . .
     1 1 1 . 

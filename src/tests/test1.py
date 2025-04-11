@@ -1,4 +1,4 @@
-import string
+from string import ascii_lowercase
 
 
 class Task1:
@@ -9,7 +9,7 @@ class Task1:
         self.y = 0
         self.res = ""
         self.system = 10
-        self.dict = string.ascii_uppercase
+        self.dict = ascii_lowercase
 
     def __to_decimal(self):
         self.x = int(self.values[0], self.system)
