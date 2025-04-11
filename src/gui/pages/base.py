@@ -100,7 +100,7 @@ class TableDraftsman:
     def gen_colors(self):
         from random import shuffle
         colors = [ft.colors.RED, ft.colors.GREEN, ft.colors.BLUE, ft.colors.YELLOW, ft.colors.PINK,
-                  ft.colors.PURPLE, ft.colors.ORANGE, ft.colors.CYAN]
+                  ft.colors.PURPLE, ft.colors.ORANGE, ft.colors.CYAN, ft.colors.GREY]
         shuffle(colors)
         return colors[:len(self.cubes)]
 

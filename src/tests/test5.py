@@ -1,4 +1,4 @@
-# BETTA
+# ALPHA
 # TODO пока только для СДНФ
 import numpy as np
 
@@ -11,6 +11,10 @@ except ModuleNotFoundError:
 cubes = (
     (4, 4),
     (3, 3),
+
+    (4, 2),
+    (2, 4),
+    (2, 4),
 
     (1, 4),
     (4, 1),
@@ -128,22 +132,43 @@ class Coverage(TableProcessor):
         self.used = []
 
     def fill_cell(self, r, c):
+
+        border_size = -1
         for cube in cubes:
+            if cube[0] * cube[1] < border_size:
+                return
+
             for x in range(cube[0] - 1, -1, -1):
                 for y in range(cube[1] - 1, -1, -1):
                     r_cord = max(0, r - x)
                     c_cord = max(0, c - y)
-
+                    if (cube[0] == 4 and r_cord > 0) or (cube[1] == 4 and c_cord > 0):
+                        continue
                     if self.check_cube(self.check_table, r_cord, c_cord, cube):
                         self.set_zone(r_cord, c_cord, cube)
                         self.used.append((r_cord, c_cord, cube))
-                        return
 
     def process(self) -> list:
-        for row in range(4):
-            for col in range(4):
+        for row in range(3, -1, -1):
+            for col in range(3, -1, -1):
                 if self.table[row, col] == 1:
                     self.fill_cell(row, col)
+
+        del_indexes = set()
+        used_len = len(self.used)
+        for i in range(used_len):
+            cube0 = self.used[i]
+            x0, y0, xs0, ys0 = cube0[0], cube0[1], cube0[2][0], cube0[2][1]
+            for j in range(i, used_len):
+                if i != j:
+                    cube1 = self.used[j]
+                    x1, y1, xs1, ys1 = cube1[0], cube1[1], cube1[2][0], cube1[2][1]
+                    if (x1 == x0 and y1 == y0) and (
+                            xs0 * ys0 > xs1 * ys1 or (xs0 == xs1 and ys0 == ys1)):
+                        del_indexes.add(j)
+
+        for iex in list(sorted(list(del_indexes), reverse=True)):
+            del self.used[iex]
 
         return self.used
 
@@ -154,11 +179,33 @@ class Overlap(TableProcessor):
         self.usages = usages
         self.table = np.zeros((6, 6), dtype=np.int8)
 
-    def process(self):
+    def nesting_checking(self):
+        pr_len = len(self.usages)
+        del_indexes = set()
+        for i in range(pr_len):
+
+            freeze = self.usages[i]
+            x0, y0, cube = freeze
+            t1 = np.zeros((6, 6), dtype=np.int8)
+            t1[x0:x0 + cube[0], y0:y0 + cube[1]] = 1
+
+            for j in range(pr_len):
+                if i != j:
+                    self.table[:, :] = 0
+                    self.set_zone(*self.usages[j], 1)
+
+                    if np.all((t1 == 1) <= (self.table == 1)):
+                        del_indexes.add(i)
+
+        for iex in list(sorted(list(del_indexes), reverse=True)):
+            del self.usages[iex]
+
+    def checking_the_overlap(self):
         res = []
 
         pr_len = len(self.usages)
         for i in range(pr_len):
+            self.table[:, :] = 0
             freeze = self.usages[i]
             for j in range(pr_len):
                 if i != j:
@@ -167,9 +214,15 @@ class Overlap(TableProcessor):
             fr, fc, fcb = freeze
             if not self.check_cube(self.table, fr, fc, fcb):
                 res.append(freeze)
-            self.table[:, :] = 0
 
-        return res
+        if not res: res = self.usages
+
+        self.usages = res
+
+    def process(self):
+        self.nesting_checking()
+        self.checking_the_overlap()
+        return self.usages
 
 
 class SequenceGeneration:
@@ -245,10 +298,14 @@ class Task5:
 if __name__ == "__main__":
     t = Task5()
     print(t.process(4, ("0", "4", "8")))
+    print(t.process(4, ("0", "2", "4", "6", "8", "10")))
     print(t.process(4, ("1", "3", "5", "7", "11", "12", "13", "14", "15")))
     print(t.process(4, ("1", "3", "5", "9", "10", "11", "13", "14", "15")))
+    #print(t.process(4, tuple("0 1 2 3 9 11 6 7 14 15 10".split())))
     """"1 3 5 7 11 12 13 14 15"""
     """"1 3 5 9 10 11 13 14 15"""
+    """0 2 4 6 8 10 """
+    """0 1 2 3 9 11 6 7 14 15 10"""
     """
     1 1 . .
     1 1 1 . 
