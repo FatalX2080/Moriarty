@@ -1,0 +1,143 @@
+import flet as ft
+import flet.canvas as cv
+from ..navigate import BottomBar
+
+from tests.test5 import addressing
+
+class BasePage:
+    win = None
+    win_size = None
+    page_list = None
+    __instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
+
+    def __init__(self):
+        bar = BottomBar(BasePage.win, BasePage.page_list)
+        self.bottom_bar = bar.NavBar
+        self._page = None
+        self.win = BasePage.win
+
+    def render(self):
+        BasePage.win.content = self._page
+
+
+class TaskBasePage(BasePage):
+    __instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
+
+    def __init__(self):
+        super().__init__()
+        self.index = 0
+        self.data = {}
+        self.evaluate_btn = ft.Button(text="Evaluate", on_click=self.process)
+
+    def process(self, e):
+        pass
+
+    def join_top(self, task_block) -> ft.Container:
+        col = ft.Column
+        cont = ft.Container
+
+        title = cont(
+            content=ft.Text(
+                "Test {0}".format(self.index),
+                theme_style=ft.TextThemeStyle.DISPLAY_LARGE
+            ),
+            alignment=ft.alignment.center,
+            expand=True,
+        )
+        return cont(col([title, cont(col(task_block))]))
+
+    def join_page(self, top_part):
+        return ft.Container(
+            content=ft.Column(
+                controls=[top_part, self.bottom_bar],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            ),
+            expand=True
+        )
+
+    def read(self, entries: dict):
+        self.data.clear()
+        for k in entries.keys(): self.data[k] = entries[k].value
+
+    def check(self):
+        return True
+
+
+class TableDraftsman:
+
+    def __init__(self):
+        self.fields = None
+        self.cubes = None
+        self.win_size = None
+
+        self.cell_size = 0
+
+        self.base_color = ft.colors.WHITE
+        self.base = []
+
+    def set_atr(self, fields, cubes, win_size):
+        self.fields = fields
+        self.cubes = cubes
+        self.win_size = win_size
+
+    def calculate_sizes(self):
+        self.cell_size = self.win_size[0] * 0.93 // 4
+        table_size = self.cell_size * 4
+
+        return (self.cell_size, self.cell_size), (table_size, table_size)
+
+    def gen_colors(self):
+        from random import shuffle
+        colors = [ft.colors.RED, ft.colors.GREEN, ft.colors.BLUE, ft.colors.YELLOW, ft.colors.PINK,
+                  ft.colors.PURPLE, ft.colors.ORANGE, ft.colors.CYAN]
+        shuffle(colors)
+        return colors[:len(self.cubes)]
+
+    def draw_table(self):
+        stroke_paint = ft.Paint(color=self.base_color, stroke_width=2, style=ft.PaintingStyle.STROKE)
+
+        cell_size, table_size = self.calculate_sizes()
+        cells = [cv.Rect(self.cell_size * i, self.cell_size * j, *cell_size, paint=stroke_paint)
+                 for i in range(4) for j in range(4)]
+
+        self.base += cells
+
+    def draw_digits(self, digit="1"):
+        digits = []
+        t_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=46, color=self.base_color)
+
+        for cell in self.fields:
+            cords = addressing[cell]
+            cords = ((cords[1] + 0.35) * self.cell_size, (cords[0] + 0.2) * self.cell_size)
+            digits.append(cv.Text(*cords, text=digit, style=t_style))
+
+        self.base += digits
+
+    def draw_cubes(self):
+        cubes = []
+        colors = self.gen_colors()
+        rec = ft.Paint(color=ft.colors.BLACK, stroke_width=2, style=ft.PaintingStyle.STROKE)
+        for iex, cube in enumerate(self.cubes):
+            rec.color = colors[iex]
+            start = ((cube[1] + 0.15) * self.cell_size, (cube[0] + 0.15) * self.cell_size)
+            size = ((cube[2][1] - 0.3) * self.cell_size, (cube[2][0] - 0.3) * self.cell_size)
+            cb = cv.Rect(*start, *size, paint=rec)
+            cubes.append(cb)
+
+        self.base += cubes
+
+    def draw(self) -> list:
+        self.draw_table()
+        self.draw_digits()
+        self.draw_cubes()
+        return self.base

@@ -1,4 +1,4 @@
-from .pages import BasePage, Page0, Page1, Page2, Page3, Page4, Page5, Page7
+from .pages import base, page0, page1, page2, page3, page4, page5, page7
 
 
 class Factory:
@@ -11,19 +11,19 @@ class Factory:
 
     def __init__(self, get_win, win_size):
         self._pages_list = []
-        BasePage.win = get_win()
-        BasePage.win_size = win_size
-        BasePage.page_list = self._pages_list
+        base.BasePage.win = get_win()
+        base.BasePage.win_size = win_size
+        base.BasePage.page_list = self._pages_list
 
         self._pages_list += [
-            Page0(),
-            Page1(),
-            Page2(),
-            Page3(),
-            Page4(),
-            Page5(),
-                Page0(),
-            Page7(),
+            page0.Page0(),
+            page1.Page1(),
+            page2.Page2(),
+            page3.Page3(),
+            page4.Page4(),
+            page5.Page5(),
+                page0.Page0(),
+            page7.Page7(),
         ]
 
     def get_list(self) -> list:
