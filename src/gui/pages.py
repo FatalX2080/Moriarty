@@ -1,4 +1,5 @@
 import flet as ft
+import flet.canvas as cv
 from .navigate import BottomBar
 import tests
 
@@ -36,6 +37,10 @@ class TaskBasePage(BasePage):
         super().__init__()
         self.index = 0
         self.data = {}
+        self.evaluate_btn = ft.Button(text="Evaluate", on_click=self.process)
+
+    def process(self, e):
+        pass
 
     def join_top(self, task_block) -> ft.Container:
         col = ft.Column
@@ -63,6 +68,101 @@ class TaskBasePage(BasePage):
     def read(self, entries: dict):
         self.data.clear()
         for k in entries.keys(): self.data[k] = entries[k].value
+
+    def check(self):
+        return True
+
+
+class TableDraftsman:
+    addressing = {
+        "0": (3, 3),
+        "1": (3, 2),
+        "2": (2, 3),
+        "3": (2, 2),
+
+        "4": (3, 0),
+        "5": (3, 1),
+        "6": (2, 0),
+        "7": (2, 1),
+
+        "8": (0, 3),
+        "9": (0, 2),
+        "10": (1, 3),
+        "11": (1, 2),
+
+        "12": (0, 0),
+        "13": (0, 1),
+        "14": (1, 0),
+        "15": (1, 1),
+    }
+
+    def __init__(self):
+        self.fields = None
+        self.cubes = None
+        self.win_size = None
+
+        self.cell_size = 0
+
+        self.base_color = ft.colors.WHITE
+        self.base = []
+
+    def set_atr(self, fields, cubes, win_size):
+        self.fields = fields
+        self.cubes = cubes
+        self.win_size = win_size
+
+    def calculate_sizes(self):
+        self.cell_size = self.win_size[0] * 0.93 // 4
+        table_size = self.cell_size * 4
+
+        return (self.cell_size, self.cell_size), (table_size, table_size)
+
+    def gen_colors(self):
+        from random import shuffle
+        colors = [ft.colors.RED, ft.colors.GREEN, ft.colors.BLUE, ft.colors.YELLOW, ft.colors.PINK,
+                  ft.colors.PURPLE, ft.colors.ORANGE, ft.colors.CYAN]
+        shuffle(colors)
+        return colors[:len(self.cubes)]
+
+    def draw_table(self):
+        stroke_paint = ft.Paint(color=self.base_color, stroke_width=2, style=ft.PaintingStyle.STROKE)
+
+        cell_size, table_size = self.calculate_sizes()
+        cells = [cv.Rect(self.cell_size * i, self.cell_size * j, *cell_size, paint=stroke_paint)
+                 for i in range(4) for j in range(4)]
+
+        self.base += cells
+
+    def draw_digits(self, digit="1"):
+        digits = []
+        t_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=46, color=self.base_color)
+
+        for cell in self.fields:
+            cords = TableDraftsman.addressing[cell]
+            cords = ((cords[1] + 0.35) * self.cell_size, (cords[0] + 0.2) * self.cell_size)
+            digits.append(cv.Text(*cords, text=digit, style=t_style))
+
+        self.base += digits
+
+    def draw_cubes(self):
+        cubes = []
+        colors = self.gen_colors()
+        rec = ft.Paint(color=ft.colors.BLACK, stroke_width=2, style=ft.PaintingStyle.STROKE)
+        for iex, cube in enumerate(self.cubes):
+            rec.color = colors[iex]
+            start = ((cube[1] + 0.15) * self.cell_size, (cube[0] + 0.15) * self.cell_size)
+            size = ((cube[2][1] - 0.3) * self.cell_size, (cube[2][0] - 0.3) * self.cell_size)
+            cb = cv.Rect(*start, *size, paint=rec)
+            cubes.append(cb)
+
+        self.base += cubes
+
+    def draw(self) -> list:
+        # TODO пока неверно отрисовывает разделённые кубы
+        self.draw_table()
+        self.draw_digits()
+        self.draw_cubes()
+        return self.base
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -109,7 +209,7 @@ class Page1(TaskBasePage):
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[self.res_text, ft.Button(text="Evaluate", on_click=self.process)],
+            controls=[self.res_text, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
@@ -136,26 +236,6 @@ class Page1(TaskBasePage):
         self.res_text.value = "Result {0}".format(res)
         self._page.update()
 
-    def check(self) -> bool:
-        try:
-            v1 = self.data["v1"]
-            v2 = self.data["v2"]
-            b = self.data["base"]
-            if v1 == "":
-                return False
-            if v2 == "":
-                return False
-            if b == "":
-                return False
-            int(v1)
-            int(v2)
-            int(v2)
-            if max(v1) >= b or max(v2) >= b:
-                return False
-        except ValueError:
-            return False
-        return True
-
 
 class Page2(TaskBasePage):
     def __init__(self):
@@ -179,7 +259,7 @@ class Page2(TaskBasePage):
     def pinit(self):
         row = ft.Row
         res_row = row(
-            controls=[self.len_text, ft.Button(text="Evaluate", on_click=self.process)],
+            controls=[self.len_text, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
@@ -214,23 +294,6 @@ class Page2(TaskBasePage):
         self.res_text.spans[0].text = "{0}".format(res[2])
         self._page.update()
 
-    def check(self) -> bool:
-        try:
-            x = self.data["x"]
-            base_x = self.data["base_x"]
-            base_ans = self.data["base_ans"]
-            lg_x = self.data["lg_x"]
-            lg_ans = self.data["lg_ans"]
-            if any([i == '' for i in [x, base_x, base_ans, lg_x, lg_ans]]):
-                return False
-            int(base_x)
-            int(base_ans)
-            float(lg_x)
-            float(lg_ans)
-        except ValueError:
-            return False
-        return True
-
 
 class Page3(TaskBasePage):
     def __init__(self):
@@ -249,7 +312,7 @@ class Page3(TaskBasePage):
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[self.SDNF_text, ft.Button(text="Evaluate", on_click=self.process)],
+            controls=[self.SDNF_text, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
         task_content = [
@@ -276,21 +339,6 @@ class Page3(TaskBasePage):
 
         self._page.update()
 
-    def check(self) -> bool:
-        try:
-            x = self.data["count"]
-            res = self.data["res"]
-            if any([i == '' for i in [x, res]]):
-                return False
-            int(x)
-            if len(res) != 2 ** int(x):
-                return False
-            if any([int(r) != 0 and int(r) != 1 for r in list(res)]):
-                return False
-        except ValueError:
-            return False
-        return True
-
 
 class Page4(TaskBasePage):
     def __init__(self):
@@ -308,7 +356,7 @@ class Page4(TaskBasePage):
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[self.SDNF_text, ft.Button(text="Evaluate", on_click=self.process)],
+            controls=[self.SDNF_text, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
         task_content = [
@@ -332,17 +380,51 @@ class Page4(TaskBasePage):
 
         self._page.update()
 
-    def check(self) -> bool:
-        try:
-            x = self.data["count"]
-            res = self.data["res"]
-            if any([i == '' for i in [x, res]]):
-                return False
-            if any([int(r) >= 2 ** int(x) or int(r) < 0 for r in res.split()]):
-                return False
-        except ValueError:
-            return False
-        return True
+
+class Page5(TaskBasePage):
+    def __init__(self):
+        super().__init__()
+        self.index = 5
+        self.data = {}
+        self.test = tests.Task5()
+        self.draftsman = TableDraftsman()
+
+        self.count = ft.TextField(label="Count of variables")
+        self.res = ft.TextField(label="Results f(x)")
+
+        self.canvas = cv.Canvas(width=200, height=200)
+
+        self._page = self.pinit()
+
+    def pinit(self):
+        res_row = ft.Row(
+            controls=[ft.Text(""), self.evaluate_btn],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+        task_content = [
+            self.count,
+            self.res,
+            ft.Divider(height=1),
+            res_row,
+            self.canvas
+        ]
+        top_part = self.join_top(task_content)
+        return self.join_page(top_part)
+
+    # ------------------------------------------------------------------------------------------------------
+
+    def process(self, e):
+        self.read({"count": self.count, "res": self.res})
+        assert self.check()
+        self.data["count"] = int(self.data["count"])
+        self.data["res"] = list(sorted(self.data["res"].split()))
+        res = self.test.process(*self.data.values())
+
+        self.draftsman.set_atr(self.data["res"], res, self.win_size)
+        self.canvas.clean()
+        self.canvas.shapes = self.draftsman.draw()
+
+        self._page.update()
 
 
 class Page7(TaskBasePage):
@@ -366,7 +448,7 @@ class Page7(TaskBasePage):
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[ft.Text(""), ft.Button(text="Evaluate", on_click=self.process)],
+            controls=[ft.Text(""), self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
         task_content = [
@@ -398,16 +480,3 @@ class Page7(TaskBasePage):
         self.view.controls.append(result_text)
 
         self._page.update()
-
-    def check(self) -> bool:
-        try:
-            x = self.data["number"]
-            p = self.data["p"]
-            m = self.data["m"]
-            if x == '' or p == '' or m == '': return False
-            float(x)
-            int(p)
-            int(m)
-        except ValueError:
-            return False
-        return True

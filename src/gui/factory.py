@@ -1,4 +1,4 @@
-from .pages import BasePage, Page0, Page1, Page2, Page3, Page4, Page7
+from .pages import BasePage, Page0, Page1, Page2, Page3, Page4, Page5, Page7
 
 
 class Factory:
@@ -21,7 +21,7 @@ class Factory:
             Page2(),
             Page3(),
             Page4(),
-                Page0(),
+            Page5(),
                 Page0(),
             Page7(),
         ]
