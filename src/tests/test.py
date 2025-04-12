@@ -139,3 +139,20 @@ class SdknfGenerator:
 
     def build_table(self):
         pass
+
+    def __func_decompose(self, f, f_type):
+        split_signs = ("+", "*") if f_type else ("*", "+")
+        return sorted([sorted(j[1:-1].split(split_signs[0])) for j in f.split(split_signs[1])])
+
+    def compare_functions(self, func1: str, func2: str, f_type: int = 1) -> bool:
+        """
+        :param func1: comparing function 1
+        :param func2: comparing function 2
+        :param f_type: 1 - SDNF / 2 - SKNF
+        :return: equal functions state
+        """
+        func_t1 = self.__func_decompose(func1, f_type)
+        func_t2 = self.__func_decompose(func2, f_type)
+        if len(func_t1) != len(func_t2):
+            return False
+        return all([j[0] == j[1] for j in zip(func_t1, func_t2)])

@@ -11,4 +11,3 @@ class Page0(BasePage):
             controls=[ft.Text("Template"), self.bottom_bar],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
-

@@ -20,10 +20,18 @@ class BasePage:
         bar = BottomBar(BasePage.win, BasePage.page_list)
         self.bottom_bar = bar.NavBar
         self._page = None
+        self.alert = None
         self.win = BasePage.win
 
-    def render(self):
+    def render(self, event=None):
+        if self.alert is not None:
+            event.control.page.overlay.append(self.alert)
+            self.alert.open = True
+
         BasePage.win.content = self._page
+
+    def pinit(self):
+        return None
 
 
 class TaskBasePage(BasePage):

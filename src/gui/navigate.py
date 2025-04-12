@@ -27,7 +27,7 @@ class MainMenu:
             page_iex = e.control.selected_index
             page = self.__pages_list[page_iex]
             if page is None:  page = self.__pages_list[0]
-            page.render()
+            page.render(e)
             e.control.page.update()
         except IndexError:
             raise Exception("Index out of range")

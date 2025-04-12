@@ -7,6 +7,7 @@ try:
     from test4 import Task4
 except ModuleNotFoundError:
     from .test import AdjacencyTable, SdknfGenerator
+    from .test4 import Task4
 # ----------------------------------------------------------------------------------------------------------
 
 cubes = (
@@ -273,12 +274,18 @@ class Task5:
     def reset(self):
         self.table = None
 
+    def compare(self, v_count, f_values, test5_ans):
+        task4_eng = Task4()
+        t4_ans = task4_eng.process(v_count, f_values)
+        return self.dkgen.compare_functions(t4_ans, test5_ans)
+
     # ------------------------------------------------------------------------------------------------------
-    def process(self, x: int, f_values: tuple) -> tuple:
+    def process(self, x: int, f_values: tuple, silent_check: bool = False) -> tuple:
         """
           :param x: count of variables
           :param f_values: tuples of stings 10 base func values
-          :return: MDNF
+          :param silent_check: flag for test 4 comparing
+          :return: cubes, (adjacency table tata), MdkNF, confirmed state
           """
         self.reset()
 
@@ -295,7 +302,9 @@ class Task5:
 
         ans = self.dkgen.sdnf(used_list)
 
-        return usages, (rows, column, table), ans
+        confirmed = self.compare(x, f_values, ans) if silent_check else 0
+
+        return usages, (rows, column, table), ans, confirmed
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -312,8 +321,9 @@ if __name__ == "__main__":
         ("0", "1", "2", "3", "9", "11", "6", "7", "14", "15", "10")
     ]
     for i in tests:
-        print(t5.process(4, i)[-1])
+        print(t5.process(4, i)[-2])
         print(t4.process(4, i))
+        print("-" * 30)
     """"
     1 3 5 7 11 12 13 14 15
     1 3 5 9 10 11 13 14 15
