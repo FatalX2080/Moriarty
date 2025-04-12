@@ -1,3 +1,6 @@
+import string
+
+
 class Supportive:
     def __init__(self):
         self.__logs = []
@@ -15,8 +18,8 @@ class Supportive:
     def reset(self):
         self.__logs = []
 
+
 # ----------------------------------------------------------------------------------------------------------
-import string
 
 
 class AdjacencyTable:
@@ -95,16 +98,44 @@ class AdjacencyTable:
         self.cyclic_activation()
         return self.get_the_used()
 
+    def get_table(self):
+        return self.t.copy()
+
 
 # ----------------------------------------------------------------------------------------------------------
-def gen_SDNF(rows) -> str:
-    res = ""
-    alph = string.ascii_lowercase
-    for block in rows:
-        temp = "("
-        i = 0
-        for el in block:
-            if el != "-":  temp += "!" * (el == "0") + alph[i] + "*"
-            i += 1
-        res += temp[:-1] + ")+"
-    return res[:-1] if res[:-1] != ')' else "VOID"
+
+class SdknfGenerator:
+    def __init__(self, mode=1):
+        if mode:
+            self.alph = string.ascii_lowercase
+        else:
+            self.alph = [f"x{i}" for i in range(9)]
+
+    def sdnf(self, rows: tuple | list) -> str:
+        """
+        :param rows: tuple of variables value ([0, 1, 0, 1], [1 0 0 1])
+        :return: sdnf function
+        """
+        res = ""
+        for block in rows:
+            temp = "("
+            for i, el in enumerate(block):
+                if el != "-":  temp += "!" * (el == "1") + self.alph[i] + "+"
+            res += temp[:-1] + ")*"
+        return res[:-1] if res[:-1] != ')' else "VOID"
+
+    def sknf(self, rows: tuple | list) -> str:
+        """
+        :param rows: tuple of variables value ([0, 1, 0, 1], [1 0 0 1])
+        :return: sknf function
+        """
+        res = ""
+        for block in rows:
+            temp = "("
+            for i, el in enumerate(block):
+                if el != "-":  temp += "!" * (el == "0") + self.alph[i] + "*"
+            res += temp[:-1] + ")+"
+        return res[:-1] if res[:-1] != ')' else "VOID"
+
+    def build_table(self):
+        pass

@@ -1,9 +1,9 @@
 # BETTA
 # TODO пока только для СДНФ
 try:
-    from test import AdjacencyTable, gen_SDNF
+    from test import AdjacencyTable, SdknfGenerator
 except ModuleNotFoundError:
-    from .test import AdjacencyTable, gen_SDNF
+    from .test import AdjacencyTable, SdknfGenerator
 
 
 class Task4:
@@ -13,6 +13,8 @@ class Task4:
         self.gen = []
         self.new_gen = []
         self.columns = []
+
+        self.dkgen = SdknfGenerator()
 
     # ------------------------------------------------------------------------------------------------------
 
@@ -98,7 +100,7 @@ class Task4:
         tp = AdjacencyTable(columns, rows)
         res_rows = tp.process()
         # --------------------------------------------------------------------------------------------------
-        ans = gen_SDNF(res_rows)
+        ans = self.dkgen.sdnf(res_rows)
 
         return ans
 

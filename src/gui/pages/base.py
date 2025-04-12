@@ -202,3 +202,24 @@ class TableDraftsman:
         self.draw_digits()
         self.draw_cubes()
         return self.base
+
+
+class AdjacencyTableDraftsman:
+    def __init__(self):
+        pass
+
+    def draw(self, rows, cols, table):
+        base_col = [ft.DataColumn(ft.Text(""))]
+        base_col += [
+            ft.DataColumn(ft.Text(text, weight=ft.FontWeight.BOLD)) for text in cols
+        ]
+
+        rows = [
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(ft.Text(rows[i], weight=ft.FontWeight.BOLD)),
+                    *[ft.DataCell(ft.Text(str(table[i][j]))) for j in range(len(cols))]
+                ],
+            ) for i in range(len(rows))
+        ]
+        return base_col, rows

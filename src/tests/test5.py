@@ -3,9 +3,10 @@
 import numpy as np
 
 try:
-    from test import AdjacencyTable, gen_SDNF
+    from test import AdjacencyTable, SdknfGenerator
+    from test4 import Task4
 except ModuleNotFoundError:
-    from .test import AdjacencyTable, gen_SDNF
+    from .test import AdjacencyTable, SdknfGenerator
 # ----------------------------------------------------------------------------------------------------------
 
 cubes = (
@@ -13,7 +14,6 @@ cubes = (
     (3, 3),
 
     (4, 2),
-    (2, 4),
     (2, 4),
 
     (1, 4),
@@ -226,7 +226,6 @@ class Overlap(TableProcessor):
 
 
 class SequenceGeneration:
-
     def __init__(self, mcubes, fval):
         self.mcubes = mcubes
         self.fval = fval
@@ -240,7 +239,6 @@ class SequenceGeneration:
 
         columns = np.array(cube_letters).T
         flags = (np.any(columns, axis=1) == 0) + (np.all(columns, axis=1))
-        # a b c d
         bunch = [str(cube_letters[0][f]) if flags[f] else "-" for f in range(4)]
         return "".join(bunch)
 
@@ -253,13 +251,15 @@ class SequenceGeneration:
 
         columns = [bin(int(fv))[2:].zfill(4) for fv in self.fval]
         t_processor = AdjacencyTable(columns, res)
+        table = t_processor.get_table()
         ls = t_processor.process()
-        return columns, res, ls
+        return columns, res, ls, table
 
 
 class Task5:
     def __init__(self):
         self.table = None
+        self.dkgen = SdknfGenerator()
 
     def create_table(self, values):
         self.table = np.zeros((6, 6), dtype=np.int8)
@@ -274,10 +274,15 @@ class Task5:
         self.table = None
 
     # ------------------------------------------------------------------------------------------------------
-    def process(self, n: int, func_values: tuple):
+    def process(self, x: int, f_values: tuple) -> tuple:
+        """
+          :param x: count of variables
+          :param f_values: tuples of stings 10 base func values
+          :return: MDNF
+          """
         self.reset()
 
-        self.create_table(func_values)
+        self.create_table(f_values)
 
         cov_engine = Coverage(self.table)
         preliminary_list = cov_engine.process()
@@ -285,30 +290,33 @@ class Task5:
         over_engine = Overlap(preliminary_list)
         usages = over_engine.process()
 
-        seq_engine = SequenceGeneration(usages, func_values)
-        column, res, used_list = seq_engine.process()
+        seq_engine = SequenceGeneration(usages, f_values)
+        column, rows, used_list, table = seq_engine.process()
 
-        ans = gen_SDNF(used_list)
+        ans = self.dkgen.sdnf(used_list)
 
-        return usages, ans
+        return usages, (rows, column, table), ans
 
 
 # ----------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    t = Task5()
-    print(t.process(4, ("0", "4", "8")))
-    print(t.process(4, ("0", "2", "4", "6", "8", "10")))
-    print(t.process(4, ("1", "3", "5", "7", "11", "12", "13", "14", "15")))
-    print(t.process(4, ("1", "3", "5", "9", "10", "11", "13", "14", "15")))
-    #print(t.process(4, tuple("0 1 2 3 9 11 6 7 14 15 10".split())))
-    """"1 3 5 7 11 12 13 14 15"""
-    """"1 3 5 9 10 11 13 14 15"""
-    """0 2 4 6 8 10 """
-    """0 1 2 3 9 11 6 7 14 15 10"""
-    """
-    1 1 . .
-    1 1 1 . 
-    . 1 1 .
-    . 1 1 .
+    t5 = Task5()
+    t4 = Task4()
+
+    tests = [
+        ("0", "4", "8"),
+        ("0", "2", "4", "6", "8", "10"),
+        ("1", "3", "5", "7", "11", "12", "13", "14", "15"),
+        ("1", "3", "5", "9", "10", "11", "13", "14", "15"),
+        ("0", "1", "2", "3", "9", "11", "6", "7", "14", "15", "10")
+    ]
+    for i in tests:
+        print(t5.process(4, i)[-1])
+        print(t4.process(4, i))
+    """"
+    1 3 5 7 11 12 13 14 15
+    1 3 5 9 10 11 13 14 15
+    0 2 4 6 8 10 
+    0 1 2 3 9 11 6 7 14 15 10
     """
