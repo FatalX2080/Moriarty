@@ -257,7 +257,9 @@ class SequenceGeneration:
         return columns, res, ls, table
 
 
-class Task5:
+# ----------------------------------------------------------------------------------------------------------
+
+class Task5v1:
     def __init__(self):
         self.table = None
         self.dkgen = SdknfGenerator()
@@ -307,10 +309,73 @@ class Task5:
         return usages, (rows, column, table), ans, confirmed
 
 
+class Task5v2:
+    def __init__(self):
+        self.task4 = Task4(system_call=True)
+
+    def decode_bunch(self, bunch, cube):
+        # bunch = "abcd" = "10-1"
+
+        temp = np.ones((4, 4), np.uint8)
+        if bunch[0] == "1":
+            temp[2:] = 0
+        elif bunch[0] == "0":
+            temp[:2] = 0
+        cube &= temp
+
+        temp = np.ones((4, 4), np.uint8)
+        if bunch[1] == "1":
+            temp[:, 2:] = 0
+        elif bunch[1] == "0":
+            temp[:, :2] = 0
+        cube &= temp
+
+        temp = np.ones((4, 4), np.uint8)
+        if bunch[2] == "1":
+            temp[:1] = 0
+            temp[3:] = 0
+        elif bunch[2] == "0":
+            temp[1:3] = 0
+        cube &= temp
+
+        temp = np.ones((4, 4), np.uint8)
+        if bunch[3] == "1":
+            temp[:, 1] = 0
+            temp[:, 3:] = 0
+        elif bunch[3] == "0":
+            temp[:, 1:3] = 0
+        cube &= temp
+
+        return cube
+
+    def identify_cube(self, cube):
+        for r in range(4):
+            for c in range(4):
+                if cube[r][c]:
+                    size = (int(sum(cube[:, c])), int(sum(cube[r])))
+                    return r, c, size
+
+        return -1, -1, (-1, -1)
+
+    def process(self, x: int, f_values: tuple, _: ...) -> tuple:
+
+        func, t_titles, res_rows, adj_table = self.task4.test5_supportive(x, f_values)
+        columns, rows = t_titles
+
+        cubes = []
+        for row in res_rows:
+            template = np.ones((4, 4), np.uint8)
+            cube = self.decode_bunch(row, template)
+            cube_info = self.identify_cube(cube)
+            cubes.append(cube_info)
+
+        return cubes, (rows, columns, adj_table), func, 1
+
+
 # ----------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    t5 = Task5()
+    t5 = Task5v1()
     t4 = Task4()
 
     tests = [

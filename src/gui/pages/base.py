@@ -2,7 +2,7 @@ import flet as ft
 import flet.canvas as cv
 from ..navigate import BottomBar
 
-from tests.test5 import addressing
+from tests.test5v1 import addressing
 
 
 class BasePage:

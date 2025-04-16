@@ -7,12 +7,14 @@ except ModuleNotFoundError:
 
 
 class Task4:
-    def __init__(self):
+    def __init__(self, system_call: bool = False):
         self.gluing_flag = True
         self.elements = 0
         self.gen = []
         self.new_gen = []
         self.columns = []
+
+        self.system_call = system_call
 
         self.dkgen = SdknfGenerator()
 
@@ -86,7 +88,7 @@ class Task4:
         self.columns.clear()
         self.new_gen.clear()
 
-    def process(self, x: int, f_values: tuple):
+    def process(self, x: int, f_values: tuple) -> str:
         """
         :param x: count of variables
         :param f_values: tuples of stings 10 base func values
@@ -101,8 +103,16 @@ class Task4:
         res_rows = tp.process()
         # --------------------------------------------------------------------------------------------------
         ans = self.dkgen.sdnf(res_rows)
-
         return ans
+
+    def test5_supportive(self, x: int, f_values: tuple) -> tuple:
+        self.reset()
+        columns = self._stage0(x, f_values)
+        rows = self._stage1(x)
+        tp = AdjacencyTable(columns, rows)
+        table = tp.get_table()
+        res_rows = tp.process()
+        return self.dkgen.sdnf(res_rows), (columns, rows), res_rows, table
 
 
 if __name__ == "__main__":

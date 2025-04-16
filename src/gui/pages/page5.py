@@ -1,7 +1,7 @@
 import flet as ft
 import flet.canvas as cv
 from .base import TaskBasePage, TableDraftsman, AdjacencyTableDraftsman
-from tests import Task5
+from tests import Task5v1, Task5v2
 
 
 class Page5(TaskBasePage):
@@ -9,14 +9,20 @@ class Page5(TaskBasePage):
         super().__init__()
         self.index = 5
         self.data = {}
-        self.test = Task5()
+        self.testV1 = Task5v1()
+        self.testV2 = Task5v2()
         self.draftsman = TableDraftsman()
         self.adj_draftsman = AdjacencyTableDraftsman()
 
         self.count = ft.TextField(label="Count of variables")
         self.res = ft.TextField(label="Results f(x)")
 
+        # TODO заменить на Chip
         self.silent_checker = ft.Checkbox(label="Silene check", value=True)
+        self.version = ft.Dropdown(
+            label="Version", autofocus=True, value="v2",
+            options=[ft.dropdown.Option("v2"), ft.dropdown.Option("v1")]
+        )
 
         self.canvas = cv.Canvas(width=self.win_size[0] * 0.93, height=self.win_size[0] * 0.93)
         self.function_text = ft.Text("SDNF", weight=ft.FontWeight.BOLD)
@@ -26,12 +32,22 @@ class Page5(TaskBasePage):
             column_spacing=5, horizontal_margin=5
         )
 
-        self.alert = self.dinit()
+        self.version.on_change = self.call_alert
         self._page = self.pinit()
+
+    def call_alert(self, e):
+        if self.version.value == "v1":
+            alert = self.dinit()
+            e.control.page.overlay.append(alert)
+            alert.open = True
+        else:
+            self.evaluate_btn.disabled = False
+
+        e.page.update()
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[self.silent_checker, self.evaluate_btn],
+            controls=[self.silent_checker, self.version, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
@@ -46,7 +62,7 @@ class Page5(TaskBasePage):
         function_row = ft.Row(controls=[self.icon, self.function_text])
 
         answers_list = ft.ListView(
-            height=self.win_size[1] * 0.6,
+            height=self.win_size[1] * 0.55,
             spacing=10,
             controls=[
                 self.canvas,
@@ -103,7 +119,12 @@ class Page5(TaskBasePage):
         self.data["sch"] = bool(self.data["sch"])
 
         # process
-        cubes, t_data, sdnf, confirmed = self.test.process(*self.data.values())
+
+        #TODO V2 отлавливает неверные M кубы!!!
+        #TODO V2 отлавливает неверные M кубы!!!
+        #TODO V2 отлавливает неверные M кубы!!!
+        func = self.testV2 if self.version.value == "v2" else self.testV1
+        cubes, t_data, sdnf, confirmed = func.process(*self.data.values())
 
         # canvas
         self.draftsman.set_atr(self.data["res"], cubes, self.win_size)
