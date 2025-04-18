@@ -51,24 +51,19 @@ class Page5(TaskBasePage):
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
-        # TODO не прокручивается
-        adj_table = ft.ListView(
+        adj_table = ft.Row(
             controls=[self.adj_table],
-            auto_scroll=True,
+            scroll=ft.ScrollMode.AUTO,
             expand=True,
+            wrap=False
         )
 
-        # TODO не прокручивается
-        function_row = ft.Row(controls=[self.icon, self.function_text])
+        function_row = ft.Row(controls=[self.icon, self.function_text], scroll=ft.ScrollMode.AUTO)
 
         answers_list = ft.ListView(
             height=self.win_size[1] * 0.55,
             spacing=10,
-            controls=[
-                self.canvas,
-                adj_table,
-                function_row
-            ],
+            controls=[self.canvas, adj_table, function_row],
         )
 
         task_content = [
@@ -119,10 +114,6 @@ class Page5(TaskBasePage):
         self.data["sch"] = bool(self.data["sch"])
 
         # process
-
-        #TODO V2 отлавливает неверные M кубы!!!
-        #TODO V2 отлавливает неверные M кубы!!!
-        #TODO V2 отлавливает неверные M кубы!!!
         func = self.testV2 if self.version.value == "v2" else self.testV1
         cubes, t_data, sdnf, confirmed = func.process(*self.data.values())
 

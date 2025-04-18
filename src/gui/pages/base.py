@@ -2,7 +2,7 @@ import flet as ft
 import flet.canvas as cv
 from ..navigate import BottomBar
 
-from tests.test5v1 import addressing
+from tests.test5 import addressing
 
 
 class BasePage:
@@ -108,7 +108,8 @@ class TableDraftsman:
     def gen_colors(self):
         from random import shuffle
         colors = [ft.colors.RED, ft.colors.GREEN, ft.colors.BLUE, ft.colors.YELLOW, ft.colors.PINK,
-                  ft.colors.PURPLE, ft.colors.ORANGE, ft.colors.CYAN, ft.colors.GREY]
+                  ft.colors.PURPLE, ft.colors.ORANGE, ft.colors.CYAN, ft.colors.GREY, ft.colors.TEAL,
+                  ft.colors.LIME, ft.colors.BROWN]
         shuffle(colors)
         return colors[:len(self.cubes)]
 
@@ -121,14 +122,19 @@ class TableDraftsman:
 
         self.base += cells
 
-    def draw_digits(self, digit="1"):
+    def draw_digits(self, digit="1", show_numerating=False):
         digits = []
         t_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=46, color=self.base_color)
+        info_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=13, color=self.base_color)
 
-        for cell in self.fields:
-            cords = addressing[cell]
-            cords = ((cords[1] + 0.35) * self.cell_size, (cords[0] + 0.2) * self.cell_size)
-            digits.append(cv.Text(*cords, text=digit, style=t_style))
+        for num in range(16):
+            cords = addressing[str(num)]
+            if show_numerating:
+                text_cords = ((cords[1] + 0.76) * self.cell_size, (cords[0] + 0.75) * self.cell_size)
+                digits.append(cv.Text(*text_cords, text=str(num), style=info_style))
+            if str(num) in self.fields:
+                text_cords = ((cords[1] + 0.35) * self.cell_size, (cords[0] + 0.2) * self.cell_size)
+                digits.append(cv.Text(*text_cords, text=digit, style=t_style))
 
         self.base += digits
 
@@ -226,7 +232,10 @@ class AdjacencyTableDraftsman:
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(rows[i], weight=ft.FontWeight.BOLD)),
-                    *[ft.DataCell(ft.Text(str(table[i][j]))) for j in range(len(cols))]
+                    *[
+                        ft.DataCell(ft.Text(str(table[i][j]), italic=True))
+                        for j in range(len(cols))
+                    ]
                 ],
             ) for i in range(len(rows))
         ]

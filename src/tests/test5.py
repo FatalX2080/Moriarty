@@ -125,10 +125,10 @@ class TableProcessor:
 
 
 class Coverage(TableProcessor):
-    def __init__(self, table: np.array):
+    def __init__(self):
         super().__init__()
-        self.table = table
-        self.check_table = table.copy()
+        self.table = None
+        self.check_table = None
 
         self.used = []
 
@@ -148,6 +148,31 @@ class Coverage(TableProcessor):
                     if self.check_cube(self.check_table, r_cord, c_cord, cube):
                         self.set_zone(r_cord, c_cord, cube)
                         self.used.append((r_cord, c_cord, cube))
+
+    def create_table(self, values):
+        self.reset()
+        self.table = np.zeros((6, 6), dtype=np.int8)
+
+        for v in values: self.table[*addressing[v]] = 1
+        self.expand_base()
+
+    def load_cube(self, cube):
+        self.reset()
+        self.table = np.zeros((6, 6), dtype=np.int8)
+        self.table[:4, :4] = cube
+        self.expand_base()
+
+    def expand_base(self):
+        self.table[4:] = self.table[:2]
+        self.table[:, 4:] = self.table[:, :2]
+        self.table[4:, :2] = self.table[:2, :2]
+
+        self.check_table = self.table.copy()
+
+    def reset(self):
+        self.table = None
+        self.check_table = None
+        self.used = []
 
     def process(self) -> list:
         for row in range(3, -1, -1):
@@ -264,15 +289,6 @@ class Task5v1:
         self.table = None
         self.dkgen = SdknfGenerator()
 
-    def create_table(self, values):
-        self.table = np.zeros((6, 6), dtype=np.int8)
-
-        for v in values: self.table[*addressing[v]] = 1
-
-        self.table[4:] = self.table[:2]
-        self.table[:, 4:] = self.table[:, :2]
-        self.table[4:, :2] = self.table[:2, :2]
-
     def reset(self):
         self.table = None
 
@@ -291,9 +307,8 @@ class Task5v1:
           """
         self.reset()
 
-        self.create_table(f_values)
-
-        cov_engine = Coverage(self.table)
+        cov_engine = Coverage()
+        cov_engine.create_table(f_values)
         preliminary_list = cov_engine.process()
 
         over_engine = Overlap(preliminary_list)
@@ -312,6 +327,37 @@ class Task5v1:
 class Task5v2:
     def __init__(self):
         self.task4 = Task4(system_call=True)
+
+    def recognize(self, cube):
+        # width -     height |
+        rows = np.sum(cube, axis=1)
+        cols = np.sum(cube, axis=0)
+        cube_size = (np.sum(rows > 0), np.sum(cols > 0))
+        if cube_size not in cubes:
+            raise Exception("Bad cube")
+        find_flag = False
+        pos = [0, 0]
+        for r in range(3, -1, -1):
+            for c in range(3, -1, -1):
+                if cube[r][c] == 1:
+                    find_flag = True
+                    pos = [r, c]
+                    break
+            if find_flag:
+                break
+
+        if not find_flag:
+            raise Exception("Start not found")
+
+        while pos[0] > 0 or pos[1] > 0:
+            if pos[0] > 0 and cube[pos[0] - 1][pos[1]] == 1:
+                pos[0] -= 1
+            elif pos[1] > 0 and cube[pos[0]][pos[1] - 1] == 1:
+                pos[1] -= 1
+            else:
+                break
+
+        return *pos, cube_size
 
     def decode_bunch(self, bunch, cube):
         # bunch = "abcd" = "10-1"
@@ -340,7 +386,7 @@ class Task5v2:
 
         temp = np.ones((4, 4), np.uint8)
         if bunch[3] == "1":
-            temp[:, 1] = 0
+            temp[:, :1] = 0
             temp[:, 3:] = 0
         elif bunch[3] == "0":
             temp[:, 1:3] = 0
@@ -348,16 +394,7 @@ class Task5v2:
 
         return cube
 
-    def identify_cube(self, cube):
-        for r in range(4):
-            for c in range(4):
-                if cube[r][c]:
-                    size = (int(sum(cube[:, c])), int(sum(cube[r])))
-                    return r, c, size
-
-        return -1, -1, (-1, -1)
-
-    def process(self, x: int, f_values: tuple, _: ...) -> tuple:
+    def process(self, x: int, f_values: tuple, _: ... = None) -> tuple:
 
         func, t_titles, res_rows, adj_table = self.task4.test5_supportive(x, f_values)
         columns, rows = t_titles
@@ -366,7 +403,7 @@ class Task5v2:
         for row in res_rows:
             template = np.ones((4, 4), np.uint8)
             cube = self.decode_bunch(row, template)
-            cube_info = self.identify_cube(cube)
+            cube_info = self.recognize(cube)
             cubes.append(cube_info)
 
         return cubes, (rows, columns, adj_table), func, 1
@@ -375,10 +412,13 @@ class Task5v2:
 # ----------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    t5 = Task5v1()
+    t51 = Task5v1()
+    t52 = Task5v2()
     t4 = Task4()
 
     tests = [
+       # ("0"),
+        ("0", "3", "5", "8"),
         ("0", "4", "8"),
         ("0", "2", "4", "6", "8", "10"),
         ("1", "3", "5", "7", "11", "12", "13", "14", "15"),
@@ -386,7 +426,8 @@ if __name__ == "__main__":
         ("0", "1", "2", "3", "9", "11", "6", "7", "14", "15", "10")
     ]
     for i in tests:
-        print(t5.process(4, i)[-2])
+        print(t51.process(4, i)[-2])
+        print(t52.process(4, i)[-2])
         print(t4.process(4, i))
         print("-" * 30)
     """"
