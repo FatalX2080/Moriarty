@@ -8,3 +8,5 @@ from .test7 import Task7
 from .test8 import Task8
 from .test9 import Task9
 from .test10 import Task10
+from .test11 import Task11
+from .test12 import Task12

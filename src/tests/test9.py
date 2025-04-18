@@ -176,7 +176,7 @@ class Task9(Supportive):
         :param b: Operand 2
         :param values_pass: char - (y/o)
         :param operation_code: char - (p/d)
-        :return:
+        :return: logs
         """
         self.reset_logs()
         a = a.replace('.', '')

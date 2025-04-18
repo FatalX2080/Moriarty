@@ -8,13 +8,19 @@ class Task7(Supportive):
     def __init__(self):
         super().__init__()
 
-    def __to_dop_code(self, x, sign):
+    def to_dop_code(self, x, sign):
         if str(sign) == '0': return x
         inv_v = ''.join([str(int(not int(a))) for a in x])
         bin_v = bin(int(inv_v, 2) + 1)[2:]
         return bin_v.zfill(len(x))
 
     def process(self, x: str, m: int, digits_count: int) -> list:
+        """
+        :param x: number
+        :param m: Np
+        :param digits_count: Mm
+        :return: logs
+        """
         self.reset_logs()
         mant_sign = int(x.startswith('+'))
         x = x.lstrip('-').lstrip('+')
@@ -67,7 +73,7 @@ class Task7(Supportive):
         self.print(f'экспонента: {exp}')
         self.print(f'm_маш = {en}₁₀ = {bin(en).replace("0b", "")}₂')
         self.print(f'ПК: 0.{bin(en)[2:]}.{mant_sign}.{res}')
-        self.print(f'ДК: 0.{bin(en)[2:]}.{mant_sign}.{self.__to_dop_code(res, mant_sign)}')
+        self.print(f'ДК: 0.{bin(en)[2:]}.{mant_sign}.{self.to_dop_code(res, mant_sign)}')
         return self.get_logs()
 
 if __name__ == '__main__':

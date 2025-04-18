@@ -1,70 +1,20 @@
 try:
-    from test import Supportive
+    from test import Supportive, AuxiliaryFunctions
 except ModuleNotFoundError:
-    from .test import Supportive
+    from .test import Supportive, AuxiliaryFunctions
 
 
 
-class Task8(Supportive):
+class Task8(Supportive, AuxiliaryFunctions):
     def __init__(self):
         super().__init__()
 
     # ------------------------------------------------------------------------------------------------------
-
-    def plus(self, a, b):
-        prepare = lambda x: '0' + x[0] + x.split('.')[0] + x.split('.')[1]
-
-        a = prepare(a)
-        b = prepare(b)
-        k = 0
-        s = ''
-        for i in range(len(a) - 1, -1, -1):
-            s = str(int(a[i]) ^ int(b[i]) ^ k) + s
-            k = (int(a[i]) & int(b[i])) | (int(a[i]) & k) | (int(b[i]) & k)
-        return s[0:3] + '.' + s[3:]
-
-    def __PinO(self, a):
-        if a[0] == '0': return a
-        return ['1.'] + [str(int(i == '0')) for i in a[2:]]
-
-    def __PinD(self, a):
-        if a[0] == '0': return a
-        s = self.__PinO(a)
-        s = self.plus(s, '0.' + '0' * (len(s) - 3) + '1')
-        return 'Overflow' if self.ovf_validate(s) else s[2:]
-
-    def __OinD(self, a):
-        if a[0] == '0': return a
-        s = self.plus(a, '0.' + '0' * (len(a) - 3) + '1')
-        return 'Overflow' if self.ovf_validate(s) else s[2:]
-
-    def __DinP(self, a):
-        if a[0] == '0': return a
-        c = 0
-        for i in range(len(a) - 1, 1, -1):
-            if a[i] == '1':
-                c = i
-                break
-        a = a[:c] + '0' + '1' * (len(a) - c - 1)
-        return self.__PinO(a)
-
-    def __DinO(self, a):
-        if a[0] == '0': return a
-        c = 0
-        for i in range(len(a) - 1, 1, -1):
-            if a[i] == '1':
-                c = i
-                break
-        return a[:c] + '0' + '1' * (len(a) - c - 1)
-
-    def ovf_validate(self, s):
-        return s[1:3] not in ['11', '00']
-
     def pmok_script(self, result_code, operation, a, b):
         if operation == '-':
             b = str(1 ^ int(b[0])) + b[1:]
             self.print('[-Y]пк = ', b)
-        a, b = self.__PinO(a), self.__PinO(b)
+        a, b = self.PinO(a), self.PinO(b)
         text = "число в модифицированном обратном коде: "
         self.print(f'Первое {text}{a[0] + a}')
         self.print(f'Второе {text}{b[0] + b}')
@@ -90,15 +40,15 @@ class Task8(Supportive):
             s = s[2:]
             self.print('сумма в обратном коде: ', s)
             if result_code == 'P':
-                self.print('сумма в прямом коде: ', self.__PinO(s))
+                self.print('сумма в прямом коде: ', self.PinO(s))
             elif result_code == 'D':
-                self.print('сумма в доп коде: ', self.__OinD(s))
+                self.print('сумма в доп коде: ', self.OinD(s))
 
     def pmdk_script(self, result_code, operation, a, b):
         if operation == '-':
             b = str(1 ^ int(b[0])) + b[1:]
             self.print('[-Y]пк = ', b)
-        a, b = self.__PinD(a), self.__PinD(b)
+        a, b = self.PinD(a), self.PinD(b)
         self.print(f'Первое число в модифицированном дополнительном коде: {a[0] + a}')
         self.print(f'Второе число в модифицированном дополнительном коде: {b[0] + b}')
         s = self.plus(a, b)
@@ -114,15 +64,15 @@ class Task8(Supportive):
             s = s[2:]
             self.print('сумма в доп коде: ', s)
             if result_code == 'P':
-                self.print('сумма в прямом коде: ', self.__DinP(s))
+                self.print('сумма в прямом коде: ', self.DinP(s))
             elif result_code == 'O':
-                self.print('сумма в доп коде: ', self.__DinO(s))
+                self.print('сумма в доп коде: ', self.DinO(s))
 
     def dmdk_script(self, result_code, operation, a, b):
         if operation == '-':
-            b = self.__DinP(b)
+            b = self.DinP(b)
             b = str(1 ^ int(b[0])) + b[1:]
-            b = self.__PinD(b)
+            b = self.PinD(b)
             self.print('[-Y]дк = ', b)
         s = self.plus(a, b)
         self.print(' ', a[0] + a)
@@ -137,13 +87,13 @@ class Task8(Supportive):
             s = s[2:]
             self.print('сумма в доп коде: ', s)
             if result_code == 'P':
-                self.print('сумма в прямом коде: ', self.__DinP(s))
+                self.print('сумма в прямом коде: ', self.DinP(s))
 
     def omok_script(self, result_code, operation, a, b):
         if operation == '-':
-            b = self.__PinO(b)
+            b = self.PinO(b)
             b = str(1 ^ int(b[0])) + b[1:]
-            b = self.__PinO(b)
+            b = self.PinO(b)
             self.print('[-Y]oк = ', b)
         s = self.plus(a, b)
         self.print(' ', a[0] + a)
@@ -166,9 +116,9 @@ class Task8(Supportive):
             s = s[2:]
             self.print('сумма в обратном коде: ', s)
             if result_code == 'P':
-                self.print('сумма в прямом коде: ', self.__PinO(s))
+                self.print('сумма в прямом коде: ', self.PinO(s))
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------
 
     def process(self, input_code: str, operation_code: str, result_code: str, operation: str, a: str,
                 b: str) -> list:
@@ -179,7 +129,7 @@ class Task8(Supportive):
         :param operation: char - (-/+)
         :param a: operand
         :param b: operand
-        :return: result of operation
+        :return: logs
         """
         # TODO НЕ ЗАБУДЬТЕ ЧТО ЕСЛИ В ДК ПОЛУЧИЛОСЬ 111.00..0 ЭТО ТОЖЕ ПЕРЕПОЛНЕНИЕ
         self.reset_logs()

@@ -94,6 +94,12 @@ class Task10(Supportive):
         return z
 
     def process(self, a: str, b: str, code: str) -> list:
+        """
+        :param a: Operand 1
+        :param b: Operand 2
+        :param code: char - (p/d)
+        :return: logs
+        """
         self.reset_logs()
         a = a.replace(".", "")
         b = b.replace(".", "")

@@ -13,10 +13,64 @@ class Supportive:
             self.__logs.append('')
 
     def get_logs(self):
-        return self.__logs
+        logs = self.__logs.copy()
+        self.__logs.clear()
+        return logs
 
     def reset_logs(self):
         self.__logs = []
+
+
+class AuxiliaryFunctions:
+    def prepare(self, x):
+        return '0' + x[0] + x.split('.')[0] + x.split('.')[1]
+
+    def plus(self, a: str, b: str) -> str:
+        a = self.prepare(a)
+        b = self.prepare(b)
+        k = 0
+        s = ''
+        for i in range(len(a) - 1, -1, -1):
+            s = str(int(a[i]) ^ int(b[i]) ^ k) + s
+            k = (int(a[i]) & int(b[i])) | (int(a[i]) & k) | (int(b[i]) & k)
+        return s[0:3] + '.' + s[3:]
+
+    def PinO(self, a):
+        return a if a[0] == '0' else "".join(['1.'] + [str(int(i == '0')) for i in a[2:]])
+
+    def PinD(self, a):
+        if a[0] == '0': return a
+        s = self.PinO(a)
+        s = self.plus(s, '0.' + '0' * (len(s) - 3) + '1')
+        return 'Overflow' if self.ovf_validate(s) else s[2:]
+
+    def OinD(self, a):
+        if a[0] == '0': return a
+        s = self.plus(a, '0.' + '0' * (len(a) - 3) + '1')
+        return 'Overflow' if self.ovf_validate(s) else s[2:]
+
+    def DinP(self, a):
+        # TODO скорее всего неправильный
+        if a[0] == '0': return a
+        c = 0
+        for i in range(len(a) - 1, 1, -1):
+            if a[i] == '1':
+                c = i
+                break
+        a = a[:c] + '0' + '1' * (len(a) - c - 1)
+        return self.PinO(a)
+
+    def DinO(self, a):
+        if a[0] == '0': return a
+        c = 0
+        for i in range(len(a) - 1, 1, -1):
+            if a[i] == '1':
+                c = i
+                break
+        return a[:c] + '0' + '1' * (len(a) - c - 1)
+
+    def ovf_validate(self, s):
+        return s[1:3] not in ['11', '00']
 
 
 # ----------------------------------------------------------------------------------------------------------
