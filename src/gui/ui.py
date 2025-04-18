@@ -1,6 +1,8 @@
 import flet as ft
-from .factory import Factory
 from config import BASE_SIZE
+
+from .factory import Factory
+
 
 class Win:
     def __init__(self, page):

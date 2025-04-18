@@ -1,7 +1,8 @@
 import flet as ft
 import flet.canvas as cv
-from .base import TaskBasePage, TableDraftsman, AdjacencyTableDraftsman
 from tests import Task5v1, Task5v2
+
+from .base import TaskBasePage, TableDraftsman, AdjacencyTableDraftsman
 
 
 class Page5(TaskBasePage):

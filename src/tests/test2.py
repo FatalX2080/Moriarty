@@ -1,5 +1,7 @@
 from math import floor
+
 from .test import Supportive
+
 
 class Task2(Supportive):
     def __init__(self):

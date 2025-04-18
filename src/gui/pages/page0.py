@@ -1,5 +1,7 @@
 import flet as ft
+
 from .base import BasePage
+
 
 class Page0(BasePage):
     def __init__(self):

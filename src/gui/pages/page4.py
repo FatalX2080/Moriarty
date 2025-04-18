@@ -1,7 +1,7 @@
 import flet as ft
-from .base import TaskBasePage
-
 from tests import Task4
+
+from .base import TaskBasePage
 
 
 class Page4(TaskBasePage):

@@ -1,7 +1,8 @@
 import flet as ft
+from tests import Task3
+
 from .base import TaskBasePage
 
-from tests import Task3
 
 class Page3(TaskBasePage):
     def __init__(self):
