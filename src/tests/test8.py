@@ -182,6 +182,7 @@ class Task8(Supportive):
         :return: result of operation
         """
         # TODO НЕ ЗАБУДЬТЕ ЧТО ЕСЛИ В ДК ПОЛУЧИЛОСЬ 111.00..0 ЭТО ТОЖЕ ПЕРЕПОЛНЕНИЕ
+        self.reset_logs()
         assert len(a) == len(b)
         script = (input_code + operation_code).lower()
         result_code = result_code.upper()

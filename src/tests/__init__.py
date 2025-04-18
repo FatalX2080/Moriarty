@@ -6,3 +6,5 @@ from .test5 import Task5v1, Task5v2
 from .test6 import Task6
 from .test7 import Task7
 from .test8 import Task8
+from .test9 import Task9
+from .test10 import Task10

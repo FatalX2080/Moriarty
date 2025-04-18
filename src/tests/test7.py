@@ -15,6 +15,7 @@ class Task7(Supportive):
         return bin_v.zfill(len(x))
 
     def process(self, x: str, m: int, digits_count: int) -> list:
+        self.reset_logs()
         mant_sign = int(x.startswith('+'))
         x = x.lstrip('-').lstrip('+')
 
