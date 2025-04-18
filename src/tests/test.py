@@ -120,8 +120,8 @@ class SdknfGenerator:
         for block in rows:
             temp = "("
             for i, el in enumerate(block):
-                if el != "-":  temp += "!" * (el == "1") + self.alph[i] + "+"
-            res += temp[:-1] + ")*"
+                if el != "-":  temp += "!" * (el == "0") + self.alph[i] + "*"
+            res += temp[:-1] + ")+"
         return res[:-1] if res[:-1] != ')' else "VOID"
 
     def sknf(self, rows: tuple | list) -> str:
@@ -133,8 +133,8 @@ class SdknfGenerator:
         for block in rows:
             temp = "("
             for i, el in enumerate(block):
-                if el != "-":  temp += "!" * (el == "0") + self.alph[i] + "*"
-            res += temp[:-1] + ")+"
+                if el != "-":  temp += "!" * (el == "1") + self.alph[i] + "+"
+            res += temp[:-1] + ")*"
         return res[:-1] if res[:-1] != ')' else "VOID"
 
     def build_table(self):

@@ -17,15 +17,17 @@ class Page5(TaskBasePage):
         self.count = ft.TextField(label="Count of variables")
         self.res = ft.TextField(label="Results f(x)")
 
-        # TODO заменить на Chip
-        self.silent_checker = ft.Checkbox(label="Silene check", value=True)
         self.version = ft.Dropdown(
             label="Version", autofocus=True, value="v2",
             options=[ft.dropdown.Option("v2"), ft.dropdown.Option("v1")]
         )
+        self.function = ft.Dropdown(
+            label="func", autofocus=True, value="MDNF",
+            options=[ft.dropdown.Option("MDNF"), ft.dropdown.Option("MKNF")]
+        )
 
         self.canvas = cv.Canvas(width=self.win_size[0] * 0.93, height=self.win_size[0] * 0.93)
-        self.function_text = ft.Text("SDNF", weight=ft.FontWeight.BOLD)
+        self.function_text = ft.Text("M(D/K)NF", weight=ft.FontWeight.BOLD)
         self.icon = ft.Icon(name=ft.icons.ACCESS_TIME, color=ft.Colors.WHITE)
         self.adj_table = ft.DataTable(
             columns=[ft.DataColumn(ft.Text(""))],
@@ -47,7 +49,7 @@ class Page5(TaskBasePage):
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[self.silent_checker, self.version, self.evaluate_btn],
+            controls=[self.version, self.function, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
@@ -105,29 +107,30 @@ class Page5(TaskBasePage):
         # ------------------------------------------------------------------------------------------------------
 
     def process(self, e):
-        self.read({"count": self.count, "res": self.res, "sch": self.silent_checker})
+        self.read({"count": self.count, "res": self.res, "func": self.function})
 
         assert self.check()
 
         self.data["count"] = int(self.data["count"])
+        self.data["func"] = int(self.data["func"] == "MDNF")
         self.data["res"] = list(sorted(self.data["res"].split()))
-        self.data["sch"] = bool(self.data["sch"])
 
         # process
-        func = self.testV2 if self.version.value == "v2" else self.testV1
+        if not self.data["func"]:
+            func = self.testV2
+        else:
+            func = self.testV2 if self.version.value == "v2" else self.testV1
         cubes, t_data, sdnf, confirmed = func.process(*self.data.values())
 
         # canvas
         self.draftsman.set_atr(self.data["res"], cubes, self.win_size)
         self.canvas.clean()
-        self.canvas.shapes = self.draftsman.draw()
+        self.canvas.shapes = self.draftsman.draw(str(self.data["func"]))
 
         # answer
-        self.function_text.value = "SDNF {0}".format(sdnf)
-        if self.data["sch"]:
-            self.icon.name = ft.Icons.CHECK if confirmed else ft.Icons.CLOSE
-        else:
-            self.icon.name = ft.Icons.QUESTION_MARK
+        func_name = "MDNF" if self.data["func"] else "MKNF"
+        self.function_text.value = "{0} {1}".format(func_name, sdnf)
+        self.icon.name = ft.Icons.CHECK if confirmed else ft.Icons.CLOSE
 
         # table
         col, rows = self.adj_draftsman.draw(*t_data)

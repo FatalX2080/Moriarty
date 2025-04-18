@@ -94,8 +94,9 @@ class TableDraftsman:
         self.base_color = ft.colors.WHITE
         self.base = []
 
-    def set_atr(self, fields, cubes, win_size):
-        self.fields = fields
+    def set_atr(self, fields: tuple | list, cubes: tuple | list, win_size: tuple | list):
+        self.fields = list(fields)
+        self.fields.sort()
         self.cubes = cubes
         self.win_size = win_size
 
@@ -211,9 +212,9 @@ class TableDraftsman:
             cubes += p_obj
         self.base += cubes
 
-    def draw(self) -> list:
+    def draw(self, digit) -> list:
         self.draw_table()
-        self.draw_digits()
+        self.draw_digits(digit)
         self.draw_cubes()
         return self.base
 

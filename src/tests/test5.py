@@ -1,5 +1,3 @@
-# ALPHA
-# TODO пока только для СДНФ
 import numpy as np
 
 try:
@@ -298,13 +296,13 @@ class Task5v1:
         return self.dkgen.compare_functions(t4_ans, test5_ans)
 
     # ------------------------------------------------------------------------------------------------------
-    def process(self, x: int, f_values: tuple, silent_check: bool = False) -> tuple:
+    def process(self, x: int, f_values: tuple, function: int = 1) -> tuple:
         """
           :param x: count of variables
           :param f_values: tuples of stings 10 base func values
-          :param silent_check: flag for test 4 comparing
+          :param function: 1 - SDNF  |  0 - SKNF
           :return: cubes, (adjacency table tata), MdkNF, confirmed state
-          """
+        """
         self.reset()
 
         cov_engine = Coverage()
@@ -319,7 +317,7 @@ class Task5v1:
 
         ans = self.dkgen.sdnf(used_list)
 
-        confirmed = self.compare(x, f_values, ans) if silent_check else 0
+        confirmed = self.compare(x, f_values, ans)
 
         return usages, (rows, column, table), ans, confirmed
 
@@ -359,10 +357,10 @@ class Task5v2:
 
         return *pos, cube_size
 
-    def decode_bunch(self, bunch, cube):
+    def decode_bunch(self, bunch):
         # bunch = "abcd" = "10-1"
-
-        temp = np.ones((4, 4), np.uint8)
+        cube = np.ones((4, 4), np.uint8)
+        temp = cube.copy()
         if bunch[0] == "1":
             temp[2:] = 0
         elif bunch[0] == "0":
@@ -394,15 +392,19 @@ class Task5v2:
 
         return cube
 
-    def process(self, x: int, f_values: tuple, _: ... = None) -> tuple:
-
-        func, t_titles, res_rows, adj_table = self.task4.test5_supportive(x, f_values)
+    def process(self, x: int, f_values: tuple, function: int = 1) -> tuple:
+        """
+          :param x: count of variables
+          :param f_values: tuples of stings 10 base func values
+          :param function: 1 - SDNF  |  0 - SKNF
+          :return: cubes, (adjacency table tata), MdkNF, confirmed state
+        """
+        func, t_titles, res_rows, adj_table = self.task4.test5_supportive(x, f_values, function)
         columns, rows = t_titles
 
         cubes = []
         for row in res_rows:
-            template = np.ones((4, 4), np.uint8)
-            cube = self.decode_bunch(row, template)
+            cube = self.decode_bunch(row)
             cube_info = self.recognize(cube)
             cubes.append(cube_info)
 
@@ -417,7 +419,7 @@ if __name__ == "__main__":
     t4 = Task4()
 
     tests = [
-       # ("0"),
+        # ("0"),
         ("0", "3", "5", "8"),
         ("0", "4", "8"),
         ("0", "2", "4", "6", "8", "10"),

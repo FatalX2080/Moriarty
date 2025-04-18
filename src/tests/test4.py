@@ -88,11 +88,12 @@ class Task4:
         self.columns.clear()
         self.new_gen.clear()
 
-    def process(self, x: int, f_values: tuple) -> str:
+    def process(self, x: int, f_values: tuple, function: int = 1) -> str:
         """
         :param x: count of variables
         :param f_values: tuples of stings 10 base func values
-        :return: MDNF
+        :param function: 1 - SDNF  |  0 - SKNF
+        :return: M(D/K)NF
         """
         self.reset()
         # --------------------------------------------------------------------------------------------------
@@ -102,17 +103,18 @@ class Task4:
         tp = AdjacencyTable(columns, rows)
         res_rows = tp.process()
         # --------------------------------------------------------------------------------------------------
-        ans = self.dkgen.sdnf(res_rows)
+        ans = self.dkgen.sdnf(res_rows) if function else self.dkgen.sknf(res_rows)
         return ans
 
-    def test5_supportive(self, x: int, f_values: tuple) -> tuple:
+    def test5_supportive(self, x: int, f_values: tuple, function: int = 1) -> tuple:
         self.reset()
         columns = self._stage0(x, f_values)
         rows = self._stage1(x)
         tp = AdjacencyTable(columns, rows)
         table = tp.get_table()
         res_rows = tp.process()
-        return self.dkgen.sdnf(res_rows), (columns, rows), res_rows, table
+        ans = self.dkgen.sdnf(res_rows) if function else self.dkgen.sknf(res_rows)
+        return ans, (columns, rows), res_rows, table
 
 
 if __name__ == "__main__":

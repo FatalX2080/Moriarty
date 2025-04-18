@@ -1,4 +1,4 @@
-from .pages import base, page0, page1, page2, page3, page4, page5, page7
+from .pages import base, page0, page1, page2, page3, page4, page5, page6, page7
 
 
 class Factory:
@@ -22,7 +22,7 @@ class Factory:
             page3.Page3(),
             page4.Page4(),
             page5.Page5(),
-                page0.Page0(),
+            page6.Page6(),
             page7.Page7(),
         ]
 
