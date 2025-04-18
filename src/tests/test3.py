@@ -1,7 +1,8 @@
 from itertools import product
 from string import ascii_lowercase
 
-class Task3:
+
+class Task3:  # By @Sarkoxed
     def __init__(self):
         self.functions = ['', '']  # SKNF / SDNF
 
@@ -23,7 +24,7 @@ class Task3:
                 self.functions[f_values[i]] += '!' * (item[j] != f_values[i]) + a[j] + '+*'[f_values[i]]
             self.functions[f_values[i]] = self.functions[f_values[i]][:-1] + ')' + "*+"[f_values[i]]
 
-        #SDNF SKNF
+        # SDNF SKNF
         return self.functions[1][:-1], self.functions[0][:-1]
 
 

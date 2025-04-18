@@ -1,7 +1,7 @@
 from string import ascii_lowercase
 
 
-class Task1:
+class Task1:  # By @FatalX2080
     # If you aren't so lasy as me, you can make it manually (bitwise addition)
     def __init__(self):
         self.values = ()

@@ -3,7 +3,7 @@ from math import floor
 from .test import Supportive
 
 
-class Task2(Supportive):
+class Task2(Supportive):  # By @LeAgalas
     def __init__(self):
         super().__init__()
         self.s2i = {iex: litter for litter, iex in enumerate("0123456789abcdef")}

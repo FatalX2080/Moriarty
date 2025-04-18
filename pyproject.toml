@@ -1,11 +1,11 @@
 [project]
 name = "qutevm"
-version = "0.1.0"
+version = "1.0.0"
 description = "This project help you to train an EVM's thinking"
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
-    { name = "FatalX2080", email = "maks.belozerov.06@yandex.ru" }
+    { name = "FatalX2080", email = "gester.vs.sans.vs.chra@gmail.com" }
 ]
 dependencies = [
   "flet==0.27.6",

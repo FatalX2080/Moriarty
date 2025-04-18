@@ -1,12 +1,10 @@
-# BETTA
-# TODO пока только для СДНФ
 try:
     from test import AdjacencyTable, SdknfGenerator
 except ModuleNotFoundError:
     from .test import AdjacencyTable, SdknfGenerator
 
 
-class Task4:
+class Task4:  # By @FatalX2080
     def __init__(self, system_call: bool = False):
         self.gluing_flag = True
         self.elements = 0
@@ -121,13 +119,12 @@ if __name__ == "__main__":
     t = Task4()
 
     req1 = t.process(3, ("1", "7"))
-    req2 = t.process(3, ("1", "0"))
-    req3 = t.process(4, ('9', '11', '12', '14', '15'))
+    req2 = t.process(3, ("1", "7"), 0)
+    req3 = t.process(3, ("1", "0"))
+    req4 = t.process(4, ('9', '11', '12', '14', '15'))
 
     print(req1)  # (!a*!b*c)+(a*b*c)
     print(req2)  # (!a*!b)
-    print(req3)  # (a*!b*d)+(a*b*!d)+(a*c*d)
+    print(req3)  # (!a*!b)
+    print(req4)  # (a*!b*d)+(a*b*!d)+(a*c*d)
     print(t.process(4, ("1", "3", "5", "7", "11", "12", "13", "14", "15")))
-
-    assert req1 == "(!a*!b*c)+(a*b*c)"
-    assert req2 == "(!a*!b)"

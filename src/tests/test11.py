@@ -4,7 +4,7 @@ except ModuleNotFoundError:
     from .test import Supportive, AuxiliaryFunctions
 
 
-class Task11(Supportive, AuxiliaryFunctions):
+class Task11(Supportive, AuxiliaryFunctions):  # By @Sarkoxed
     def script_p(self, x, y):
         y1 = y
         x, y = self.PinO(x), self.PinO(y)

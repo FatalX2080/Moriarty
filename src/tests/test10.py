@@ -4,7 +4,7 @@ except ModuleNotFoundError:
     from .test import Supportive
 
 
-class Task10(Supportive):
+class Task10(Supportive):  # By @sappiness7223
     def __init__(self):
         super().__init__()
 

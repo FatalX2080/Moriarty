@@ -4,8 +4,7 @@ except ModuleNotFoundError:
     from .test import Supportive, AuxiliaryFunctions
 
 
-
-class Task8(Supportive, AuxiliaryFunctions):
+class Task8(Supportive, AuxiliaryFunctions):  # By @Sarkoxed
     def __init__(self):
         super().__init__()
 

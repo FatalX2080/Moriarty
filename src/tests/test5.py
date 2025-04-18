@@ -68,7 +68,7 @@ letter_addresses = {
 
 
 # ----------------------------------------------------------------------------------------------------------
-class TableProcessor:
+class TableProcessor:  # By @FatalX2080
     def __init__(self):
         self.table = None
         self.check_table = None

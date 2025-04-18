@@ -4,7 +4,7 @@ except ModuleNotFoundError:
     from .test import Supportive
 
 
-class Task7(Supportive):
+class Task7(Supportive):  # By @sappiness7223
     def __init__(self):
         super().__init__()
 
@@ -33,7 +33,7 @@ class Task7(Supportive):
             res = ''
             exp = 0
         else:
-            res =  bin(integer_part)[2:]
+            res = bin(integer_part)[2:]
             exp = len(res)
 
         self.print(f'exp = {exp}\n')
@@ -75,6 +75,7 @@ class Task7(Supportive):
         self.print(f'ПК: 0.{bin(en)[2:]}.{mant_sign}.{res}')
         self.print(f'ДК: 0.{bin(en)[2:]}.{mant_sign}.{self.to_dop_code(res, mant_sign)}')
         return self.get_logs()
+
 
 if __name__ == '__main__':
     t = Task7()
