@@ -5,3 +5,4 @@ from .test4 import Task4
 from .test5 import Task5v1, Task5v2
 from .test6 import Task6
 from .test7 import Task7
+from .test8 import Task8

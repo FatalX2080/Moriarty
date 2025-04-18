@@ -1,4 +1,4 @@
-from .pages import base, page0, page1, page2, page3, page4, page5, page6, page7
+from .pages import base, page0, page1, page2, page3, page4, page5, page6, page7, page8
 
 
 class Factory:
@@ -24,6 +24,7 @@ class Factory:
             page5.Page5(),
             page6.Page6(),
             page7.Page7(),
+            page8.Page8(),
         ]
 
     def get_list(self) -> list:

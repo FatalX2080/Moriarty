@@ -1,4 +1,7 @@
-from .test import Supportive
+try:
+    from test import Supportive
+except ModuleNotFoundError:
+    from .test import Supportive
 
 
 class Task7(Supportive):

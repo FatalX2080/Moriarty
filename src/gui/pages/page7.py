@@ -1,5 +1,4 @@
 import flet as ft
-import flet.canvas as cv
 from .base import TaskBasePage
 from tests import Task7
 
