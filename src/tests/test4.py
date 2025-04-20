@@ -3,7 +3,8 @@ try:
 except ModuleNotFoundError:
     from .test import AdjacencyTable, SdknfGenerator
 
-
+# TODO доделать выбор функции
+# TODO ИЩЕТ MDNF или SDNF!!!
 class Task4:  # By @FatalX2080
     def __init__(self, system_call: bool = False):
         self.gluing_flag = True
