@@ -7,7 +7,7 @@ from .factory import Factory
 class Win:
     def __init__(self, page):
         self.page = page
-        self.page.title = "QVM"
+        self.page.title = "Moriarty"
         self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
         #                               ------!TEST!------
