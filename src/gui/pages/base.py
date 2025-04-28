@@ -17,17 +17,17 @@ class BasePage:
         return cls.__instance
 
     def __init__(self):
-        bar = BottomBar(BasePage.win, BasePage.page_list)
-        self.bottom_bar = bar.NavBar
+        self.bottom_bar = BottomBar(BasePage.win, BasePage.page_list)
         self._page = None
         self.alert = None
         self.win = BasePage.win
+        self.index = 0
 
     def render(self, event=None):
         if self.alert is not None:
             event.control.page.overlay.append(self.alert)
             self.alert.open = True
-
+        self.bottom_bar.set_page_index(self.index)
         BasePage.win.content = self._page
 
     def pinit(self):
@@ -68,7 +68,7 @@ class TaskBasePage(BasePage):
     def join_page(self, top_part):
         return ft.Container(
             content=ft.Column(
-                controls=[top_part, self.bottom_bar],
+                controls=[top_part, self.bottom_bar.NavBar],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN
             ),
             expand=True

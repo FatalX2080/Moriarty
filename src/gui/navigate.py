@@ -1,5 +1,7 @@
 import flet as ft
 
+from .descriptions import tests_info
+
 
 class MainMenu:
     __instance = None
@@ -45,6 +47,7 @@ class BottomBar:
         self.menu = MainMenu(win, plist)
         self.NavBar = None
         self.generate()
+        self.page_index = 0
 
     def generate(self):
         dest = ft.NavigationBarDestination
@@ -59,15 +62,25 @@ class BottomBar:
         self.NavBar = ft.Pagelet(navigation_bar=bar, content=ft.Container(), height=50)
 
     def event(self, e=None):
-        iex = e.control.selected_index
-        match iex:
+        match e.control.selected_index:
             case 0:
                 self.open_navigate(e)
             case 1:
-                print("Типо информация о странице")
+                self.open_help_dlg(e)
+
+    def open_help_dlg(self, e=None):
+        dlg = ft.AlertDialog(
+            title=ft.Text(tests_info[self.page_index]),
+            on_dismiss=lambda e: print(f"Dialog dismissed!")
+        )
+        e.control.page.overlay.append(dlg)
+        dlg.open = True
+        e.control.page.update()
 
     def open_navigate(self, e):
         e.control.page.drawer = self.menu.NavDraw
         self.menu.NavDraw.open = True
         e.control.page.update()
 
+    def set_page_index(self, index):
+        self.page_index = index

@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [tool.flet]
-org = ""
+org = "com.mycompany"
 product = "Moriarty"
 company = "Flet"
 copyright = "Copyright (C) 2025 by Flet"
