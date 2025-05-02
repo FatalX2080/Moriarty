@@ -69,10 +69,7 @@ class BottomBar:
                 self.open_help_dlg(e)
 
     def open_help_dlg(self, e=None):
-        dlg = ft.AlertDialog(
-            title=ft.Text(tests_info[self.page_index]),
-            on_dismiss=lambda e: print(f"Dialog dismissed!")
-        )
+        dlg = ft.AlertDialog(title=ft.Text(tests_info[self.page_index], size=16), on_dismiss=lambda _: None)
         e.control.page.overlay.append(dlg)
         dlg.open = True
         e.control.page.update()
