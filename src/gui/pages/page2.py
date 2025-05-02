@@ -1,7 +1,7 @@
 import flet as ft
 from tests import Task2
 
-from .base import TaskBasePage
+from .base import TaskBasePage, BasicChecks
 
 
 class Page2(TaskBasePage):
@@ -50,14 +50,36 @@ class Page2(TaskBasePage):
             "x": self.num, "base_x": self.baseX, "base_ans": self.baseAns,
             "lg_x": self.lgX, "lg_ans": self.lgAns
         })
-        assert self.check()
+        try:
+            self.check()
+        except AssertionError:
+            pass
+        else:
+            res = self.test.process(*self.data.values())
+            self.len_text.value = "Fract len {0} -> {1}".format(res[0], res[1])
+            self.res_text.value = "Result {0}".format(res[3][0])
+            self.res_text.spans[0].text = "{0}".format(res[2])
+            self._page.update()
+
+    def check(self):
+        vals = list(self.data.values())
+        eng = BasicChecks()
+
+        assert eng.void_array(vals)
+
+        assert eng.is_int(vals[1])
+        assert eng.is_int(vals[2])
+        assert eng.borders(vals[1], (2, 16))
+        assert eng.borders(vals[2], (2, 16))
+
+        assert eng.include(vals[0], ".")
+
+        assert eng.is_float(vals[3])
+        assert eng.is_float(vals[4])
+
+        assert eng.grounds(vals[0], vals[1])
+
         self.data["base_x"] = int(self.data["base_x"])
         self.data["base_ans"] = int(self.data["base_ans"])
         self.data["lg_x"] = float(self.data["lg_x"])
         self.data["lg_ans"] = float(self.data["lg_ans"])
-        res = self.test.process(*self.data.values())
-        self.len_text.value = "Fract len {0} -> {1}".format(res[0], res[1])
-        self.res_text.value = "Result {0}".format(res[3][0])
-        self.res_text.spans[0].text = "{0}".format(res[2])
-        self._page.update()
-

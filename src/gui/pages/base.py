@@ -78,9 +78,6 @@ class TaskBasePage(BasePage):
         self.data.clear()
         for k in entries.keys(): self.data[k] = entries[k].value
 
-    def check(self):
-        return True
-
 
 class TableDraftsman:
 
@@ -241,3 +238,48 @@ class AdjacencyTableDraftsman:
             ) for i in range(len(rows))
         ]
         return base_col, rows
+
+
+class BasicChecks:
+    def is_int(self, x: str) -> bool:
+        return x.isdigit()
+
+    def borders(self, x: int | float, borders: tuple | list) -> bool:
+        return borders[0] <= float(x) <= borders[1]
+
+    def is_float(self, x: str) -> bool:
+        try:
+            float(x)
+            return True
+        except ValueError:
+            return False
+
+    def length(self, x: list | tuple, l: int) -> bool:
+        return len(x) == l
+
+    def equal_length(self, x, y) -> bool:
+        return len(x) == len(y)
+
+    def void(self, x) -> bool:
+        return x
+
+    def void_array(self, x):
+        return all([self.void(el) for el in x])
+
+    def array_grounds(self, x, allowed) -> bool:
+        return all([el in allowed for el in x])
+
+    def include(self, x, litter) -> bool:
+        return litter in x
+
+    def grounds(self, x: str, base) -> bool:
+        try:
+            if "." in x:
+                x = x.split(".")
+                int(x[0], int(base))
+                int(x[1], int(base))
+            else:
+                int(x, int(base))
+            return True
+        except ValueError:
+            return False
