@@ -54,12 +54,17 @@ class Page2(TaskBasePage):
             self.check()
         except AssertionError:
             self.open_error_dialogue(e)
-        else:
+            return
+
+        try:
             res = self.test.process(*self.data.values())
             self.len_text.value = "Fract len {0} -> {1}".format(res[0], res[1])
             self.res_text.value = "Result {0}".format(res[3][0])
             self.res_text.spans[0].text = "{0}".format(res[2])
             self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
+
 
     def check(self):
         vals = list(self.data.values())

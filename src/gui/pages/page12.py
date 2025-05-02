@@ -50,7 +50,9 @@ class Page12(TaskBasePage):
             self.check()
         except AssertionError:
             self.open_error_dialogue(e)
-        else:
+            return
+
+        try:
             res = self.test.process(*self.data.values())
 
             self.view.controls.clear()
@@ -58,6 +60,9 @@ class Page12(TaskBasePage):
             self.view.controls.append(result_text)
 
             self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
+
 
     def check(self):
         vals = list(self.data.values())

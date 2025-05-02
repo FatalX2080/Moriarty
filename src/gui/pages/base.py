@@ -85,6 +85,13 @@ class TaskBasePage(BasePage):
         dlg.open = True
         e.control.page.update()
 
+    def open_text_error_dialogue(self, e):
+        text = "!WARNING!\nError inside the solver, check info and try again"
+        dlg = ft.AlertDialog(title=ft.Text(text, size=16), on_dismiss=lambda _: None)
+        e.control.page.overlay.append(dlg)
+        dlg.open = True
+        e.control.page.update()
+
 
 class TableDraftsman:
 

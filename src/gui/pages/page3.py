@@ -42,13 +42,17 @@ class Page3(TaskBasePage):
             self.check()
         except AssertionError:
             self.open_error_dialogue(e)
-        else:
+            return
+
+        try:
             res = self.test.process(*self.data.values())
             # TODO не влезает
             self.SDNF_text.value = "SDNF {0}".format(res[0])
             self.SKNF_text.value = "SKNF {0}".format(res[1])
+            self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
 
-        self._page.update()
 
     def check(self):
         vals = list(self.data.values())

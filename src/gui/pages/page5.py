@@ -113,7 +113,9 @@ class Page5(TaskBasePage):
             self.check()
         except AssertionError:
             self.open_error_dialogue(e)
-        else:
+            return
+
+        try:
             # process
             if not self.data["func"]:
                 func = self.testV2
@@ -137,6 +139,9 @@ class Page5(TaskBasePage):
             self.adj_table.rows = rows
 
             self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
+
 
     def check(self):
         vals = list(self.data.values())

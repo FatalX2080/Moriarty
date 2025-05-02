@@ -92,7 +92,9 @@ class Page6(TaskBasePage):
             self.check()
         except AssertionError:
             self.open_error_dialogue(e)
-        else:
+            return
+
+        try:
             # process
             mDnf, mKnf = self.test.process(*self.data.values())
 
@@ -127,6 +129,9 @@ class Page6(TaskBasePage):
             self.mknf_adj_table.rows = rows
 
             self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
+
 
     def check(self):
         vals = list(self.data.values())

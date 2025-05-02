@@ -56,10 +56,15 @@ class Page1(TaskBasePage):
             self.check()
         except AssertionError:
             self.open_error_dialogue(e)
-        else:
+            return
+
+        try:
             res = self.test.process(self.data["op"], (self.data["v1"], self.data["v2"]), self.data["base"])
             self.res_text.value = "Result {0}".format(res)
             self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
+
 
     def check(self):
         vals = list(self.data.values())
