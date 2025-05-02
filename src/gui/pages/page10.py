@@ -51,7 +51,7 @@ class Page10(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            pass
+            self.open_error_dialogue(e)
         else:
             pack1 = [self.data["1p"], self.data["2p"], "p"]
             resp = self.test.process(*pack1)

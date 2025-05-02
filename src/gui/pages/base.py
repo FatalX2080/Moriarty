@@ -78,6 +78,13 @@ class TaskBasePage(BasePage):
         self.data.clear()
         for k in entries.keys(): self.data[k] = entries[k].value
 
+    def open_error_dialogue(self, e):
+        text = "!WARNING!\nValues are incorrect, check info and try again"
+        dlg = ft.AlertDialog(title=ft.Text(text, size=16), on_dismiss=lambda _: None)
+        e.control.page.overlay.append(dlg)
+        dlg.open = True
+        e.control.page.update()
+
 
 class TableDraftsman:
 

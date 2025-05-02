@@ -53,7 +53,7 @@ class Page2(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            pass
+            self.open_error_dialogue(e)
         else:
             res = self.test.process(*self.data.values())
             self.len_text.value = "Fract len {0} -> {1}".format(res[0], res[1])

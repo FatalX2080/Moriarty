@@ -49,7 +49,7 @@ class Page12(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            pass
+            self.open_error_dialogue(e)
         else:
             res = self.test.process(*self.data.values())
 

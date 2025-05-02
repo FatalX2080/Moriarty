@@ -91,7 +91,7 @@ class Page6(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            pass
+            self.open_error_dialogue(e)
         else:
             # process
             mDnf, mKnf = self.test.process(*self.data.values())
