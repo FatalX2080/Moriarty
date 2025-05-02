@@ -1,7 +1,7 @@
 import flet as ft
 from tests import Task4
 
-from .base import TaskBasePage
+from .base import TaskBasePage, BasicChecks
 
 
 class Page4(TaskBasePage):
@@ -36,12 +36,31 @@ class Page4(TaskBasePage):
 
     def process(self, e):
         self.read({"count": self.count, "res": self.res})
-        assert self.check()
+        try:
+            self.check()
+        except AssertionError:
+            pass
+        else:
+            res = self.test.process(*self.data.values())
+            self.SDNF_text.value = "SDNF {0}".format(res)
+
+            self._page.update()
+
+    def check(self):
+        vals = list(self.data.values())
+        eng = BasicChecks()
+
+        assert eng.void_array(vals)
+
+        assert eng.is_int(vals[0])
+        assert eng.borders(vals[0], (1, 10))
+
+        borders = (1, 2 ** int(vals[0]))
+        assert eng.borders(len(vals[1].split()), borders)
+        borders = (0, 2 ** int(vals[0]) - 1)
+        fv = [int(el) for el in vals[1].split()]
+        assert eng.borders(max(fv), borders)
+        assert eng.borders(min(fv), borders)
+
         self.data["count"] = int(self.data["count"])
         self.data["res"] = list(sorted(self.data["res"].split()))
-        res = self.test.process(*self.data.values())
-        self.SDNF_text.value = "SDNF {0}".format(res)
-
-        self._page.update()
-
-

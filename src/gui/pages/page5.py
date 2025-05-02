@@ -2,7 +2,7 @@ import flet as ft
 import flet.canvas as cv
 from tests import Task5v1, Task5v2
 
-from .base import TaskBasePage, TableDraftsman, AdjacencyTableDraftsman
+from .base import TaskBasePage, TableDraftsman, AdjacencyTableDraftsman, BasicChecks
 
 
 class Page5(TaskBasePage):
@@ -109,33 +109,51 @@ class Page5(TaskBasePage):
 
     def process(self, e):
         self.read({"count": self.count, "res": self.res, "func": self.function})
+        try:
+            self.check()
+        except AssertionError:
+            pass
+        else:
+            # process
+            if not self.data["func"]:
+                func = self.testV2
+            else:
+                func = self.testV2 if self.version.value == "v2" else self.testV1
+            cubes, t_data, sdnf, confirmed = func.process(*self.data.values())
 
-        assert self.check()
+            # canvas
+            self.draftsman.set_atr(self.data["res"], cubes, self.win_size)
+            self.canvas.clean()
+            self.canvas.shapes = self.draftsman.draw(str(self.data["func"]))
+
+            # answer
+            func_name = "MDNF" if self.data["func"] else "MKNF"
+            self.function_text.value = "{0} {1}".format(func_name, sdnf)
+            self.icon.name = ft.Icons.CHECK if confirmed else ft.Icons.CLOSE
+
+            # table
+            col, rows = self.adj_draftsman.draw(*t_data)
+            self.adj_table.columns = col
+            self.adj_table.rows = rows
+
+            self._page.update()
+
+    def check(self):
+        vals = list(self.data.values())
+        eng = BasicChecks()
+
+        assert eng.void_array(vals)
+
+        assert eng.is_int(vals[0])
+        assert eng.borders(vals[0], (4, 4))
+
+        borders = (1, 2 ** int(vals[0]))
+        assert eng.borders(len(vals[1].split()), borders)
+        borders = (0, 2 ** int(vals[0]) - 1)
+        fv = [int(el) for el in vals[1].split()]
+        assert eng.borders(max(fv), borders)
+        assert eng.borders(min(fv), borders)
 
         self.data["count"] = int(self.data["count"])
         self.data["func"] = int(self.data["func"] == "MDNF")
         self.data["res"] = list(sorted(self.data["res"].split()))
-
-        # process
-        if not self.data["func"]:
-            func = self.testV2
-        else:
-            func = self.testV2 if self.version.value == "v2" else self.testV1
-        cubes, t_data, sdnf, confirmed = func.process(*self.data.values())
-
-        # canvas
-        self.draftsman.set_atr(self.data["res"], cubes, self.win_size)
-        self.canvas.clean()
-        self.canvas.shapes = self.draftsman.draw(str(self.data["func"]))
-
-        # answer
-        func_name = "MDNF" if self.data["func"] else "MKNF"
-        self.function_text.value = "{0} {1}".format(func_name, sdnf)
-        self.icon.name = ft.Icons.CHECK if confirmed else ft.Icons.CLOSE
-
-        # table
-        col, rows = self.adj_draftsman.draw(*t_data)
-        self.adj_table.columns = col
-        self.adj_table.rows = rows
-
-        self._page.update()

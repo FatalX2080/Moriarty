@@ -5,7 +5,7 @@ tests_info = (
     "Count of variables n=[3];\nThe values that the function accepts(2^n) [0 1 0 1 0 1 0 1]",
     "Count of variables[3];\nWhere f takes the desired values[1 3 7]",
     "Count of variables[3];\nWhere f takes the desired values[3 5]",
-    "Count of variables[3];\nWhere f takes the desired values[1 3];\nWhere f takes the forbidden values[2]",
+    "Count of variables[3];\nWhere f takes the desired values[1 3];\nWhere f takes the forbidden values[2 4]",
     "The specified number[-0.070];\nnп[5];\nnм[15]",
     "First operand[1.0010];\nSecond operand[0.1110]",
     "First operand[1.00];\nSecond operand[0.11]",

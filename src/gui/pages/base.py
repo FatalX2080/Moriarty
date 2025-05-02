@@ -245,7 +245,7 @@ class BasicChecks:
         return x.isdigit()
 
     def borders(self, x: int | float, borders: tuple | list) -> bool:
-        return borders[0] <= float(x) <= borders[1]
+        return float(borders[0]) <= float(x) <= float(borders[1])
 
     def is_float(self, x: str) -> bool:
         try:
