@@ -4,6 +4,8 @@ from config import BASE_SIZE
 from .factory import Factory
 
 
+# TODO 5-7 нижняя полоса съехала
+
 class Win:
     def __init__(self, page):
         self.page = page

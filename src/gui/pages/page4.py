@@ -14,20 +14,28 @@ class Page4(TaskBasePage):
         self.count = ft.TextField(label="Count of variables")
         self.res = ft.TextField(label="Results f(x)")
 
-        self.SDNF_text = ft.Text("SDNF", weight=ft.FontWeight.BOLD)
+        self.f_type = ft.Dropdown(
+            label="function type", autofocus=True, value="1",
+            options=[ft.dropdown.Option("1", "MDNF"), ft.dropdown.Option("0", "MKNF")],
+        )
+
+        self.MDNF_text = ft.Text("MDNF", weight=ft.FontWeight.BOLD)
 
         self._page = self.pinit()
 
     def pinit(self):
+        function_row = ft.Row(controls=[self.MDNF_text], scroll=ft.ScrollMode.AUTO)
+
         res_row = ft.Row(
-            controls=[self.SDNF_text, self.evaluate_btn],
+            controls=[self.f_type, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
         task_content = [
             self.count,
             self.res,
             ft.Divider(height=1),
-            res_row
+            res_row,
+            function_row
         ]
         top_part = self.join_top(task_content)
         return self.join_page(top_part)
@@ -35,7 +43,7 @@ class Page4(TaskBasePage):
     # ------------------------------------------------------------------------------------------------------
 
     def process(self, e):
-        self.read({"count": self.count, "res": self.res})
+        self.read({"count": self.count, "res": self.res, "f_type": self.f_type})
         try:
             self.check()
         except AssertionError:
@@ -44,11 +52,10 @@ class Page4(TaskBasePage):
 
         try:
             res = self.test.process(*self.data.values())
-            self.SDNF_text.value = "SDNF {0}".format(res)
+            self.MDNF_text.value = "MDNF {0}".format(res)
             self._page.update()
         except:
             self.open_text_error_dialogue(e)
-
 
     def check(self):
         vals = list(self.data.values())
@@ -68,3 +75,4 @@ class Page4(TaskBasePage):
 
         self.data["count"] = int(self.data["count"])
         self.data["res"] = list(sorted(self.data["res"].split()))
+        self.data["f_type"] = int(self.data["f_type"])

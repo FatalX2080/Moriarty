@@ -121,7 +121,7 @@ class Page5(TaskBasePage):
                 func = self.testV2
             else:
                 func = self.testV2 if self.version.value == "v2" else self.testV1
-            cubes, t_data, sdnf, confirmed = func.process(*self.data.values())
+            cubes, t_data, sdknf, confirmed = func.process(*self.data.values())
 
             # canvas
             self.draftsman.set_atr(self.data["res"], cubes, self.win_size)
@@ -130,7 +130,7 @@ class Page5(TaskBasePage):
 
             # answer
             func_name = "MDNF" if self.data["func"] else "MKNF"
-            self.function_text.value = "{0} {1}".format(func_name, sdnf)
+            self.function_text.value = "{0} {1}".format(func_name, sdknf)
             self.icon.name = ft.Icons.CHECK if confirmed else ft.Icons.CLOSE
 
             # table

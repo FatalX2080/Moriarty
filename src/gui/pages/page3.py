@@ -20,8 +20,11 @@ class Page3(TaskBasePage):
         self._page = self.pinit()
 
     def pinit(self):
+        dfunction_row = ft.Row(controls=[self.SDNF_text], scroll=ft.ScrollMode.AUTO)
+        kfunction_row = ft.Row(controls=[self.SKNF_text], scroll=ft.ScrollMode.AUTO)
+
         res_row = ft.Row(
-            controls=[self.SDNF_text, self.evaluate_btn],
+            controls=[ft.Text(""), self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
         task_content = [
@@ -29,7 +32,8 @@ class Page3(TaskBasePage):
             self.res,
             ft.Divider(height=1),
             res_row,
-            self.SKNF_text
+            dfunction_row,
+            kfunction_row
         ]
         top_part = self.join_top(task_content)
         return self.join_page(top_part)
@@ -46,7 +50,6 @@ class Page3(TaskBasePage):
 
         try:
             res = self.test.process(*self.data.values())
-            # TODO не влезает
             self.SDNF_text.value = "SDNF {0}".format(res[0])
             self.SKNF_text.value = "SKNF {0}".format(res[1])
             self._page.update()
