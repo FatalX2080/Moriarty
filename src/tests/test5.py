@@ -1,10 +1,10 @@
 import numpy as np
 
 try:
-    from test import AdjacencyTable, SdknfGenerator
+    from test import AdjacencyTable, DKnfGenerator
     from test4 import Task4
 except ModuleNotFoundError:
-    from .test import AdjacencyTable, SdknfGenerator
+    from .test import AdjacencyTable, DKnfGenerator
     from .test4 import Task4
 # ----------------------------------------------------------------------------------------------------------
 
@@ -285,7 +285,7 @@ class SequenceGeneration:
 class Task5v1:
     def __init__(self):
         self.table = None
-        self.dkgen = SdknfGenerator()
+        self.dkgen = DKnfGenerator()
 
     def reset(self):
         self.table = None

@@ -1,7 +1,7 @@
 try:
-    from test import AdjacencyTable, SdknfGenerator
+    from test import AdjacencyTable, DKnfGenerator
 except ModuleNotFoundError:
-    from .test import AdjacencyTable, SdknfGenerator
+    from .test import AdjacencyTable, DKnfGenerator
 
 
 class Task4:  # By @FatalX2080
@@ -14,7 +14,7 @@ class Task4:  # By @FatalX2080
 
         self.system_call = system_call
 
-        self.dkgen = SdknfGenerator()
+        self.dkgen = DKnfGenerator()
 
     # ------------------------------------------------------------------------------------------------------
 

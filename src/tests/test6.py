@@ -1,8 +1,8 @@
 try:
-    from test import AdjacencyTable, SdknfGenerator
+    from test import AdjacencyTable
     from test5 import Task5v2
 except ModuleNotFoundError:
-    from .test import AdjacencyTable, SdknfGenerator
+    from .test import AdjacencyTable
     from .test5 import Task5v2
 
 

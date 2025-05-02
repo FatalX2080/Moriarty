@@ -158,7 +158,7 @@ class AdjacencyTable:
 
 # ----------------------------------------------------------------------------------------------------------
 
-class SdknfGenerator:
+class DKnfGenerator:
     def __init__(self, mode=1):
         if mode:
             self.alph = string.ascii_lowercase
