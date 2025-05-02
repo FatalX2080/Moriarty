@@ -1,7 +1,7 @@
 import flet as ft
 from tests import Task11
 
-from .base import TaskBasePage
+from .base import TaskBasePage, BasicChecks
 
 
 class Page11(TaskBasePage):
@@ -54,14 +54,28 @@ class Page11(TaskBasePage):
     def process(self, e):
         self.read({"code": self.code, "p1n1": self.num1_p1, "p1n2": self.num2_p1,
                    "p2n1": self.num1_p2, "p2n2": self.num2_p2})
+        try:
+            self.check()
+        except AssertionError:
+            pass
+        else:
+            res = self.test.process(*self.data.values())
 
-        assert self.check()
+            self.view.controls.clear()
+            text = "\n".join(res)
+            result_text = ft.Text(value=text, selectable=True, size=14)
+            self.view.controls.append(result_text)
 
-        res = self.test.process(*self.data.values())
+            self._page.update()
 
-        self.view.controls.clear()
-        text = "\n".join(res)
-        result_text = ft.Text(value=text, selectable=True, size=14)
-        self.view.controls.append(result_text)
+    def check(self):
+        vals = list(self.data.values())
+        eng = BasicChecks()
 
-        self._page.update()
+        assert eng.void_array(vals)
+
+        assert eng.is_float(vals[1])
+        assert eng.is_float(vals[2])
+        assert eng.is_int(vals[3])
+        assert eng.is_int(vals[4])
+

@@ -1,7 +1,7 @@
 import flet as ft
 from tests import Task10
 
-from .base import TaskBasePage
+from .base import TaskBasePage, BasicChecks
 
 
 class Page10(TaskBasePage):
@@ -47,18 +47,31 @@ class Page10(TaskBasePage):
     # ------------------------------------------------------------------------------------------------------
 
     def process(self, e):
-        self.read({"1p": self.num1p, "2p": self.num2p,
-                   "1d": self.num1d, "2d": self.num2d})
-        assert self.check()
+        self.read({"1p": self.num1p, "2p": self.num2p, "1d": self.num1d, "2d": self.num2d})
+        try:
+            self.check()
+        except AssertionError:
+            pass
+        else:
+            pack1 = [self.data["1p"], self.data["2p"], "p"]
+            resp = self.test.process(*pack1)
+            pack2 = [self.data["1d"], self.data["2d"], "d"]
+            resd = self.test.process(*pack2)
 
-        pack1 = [self.data["1p"], self.data["2p"], "p"]
-        resp = self.test.process(*pack1)
-        pack2 = [self.data["1d"], self.data["2d"], "d"]
-        resd = self.test.process(*pack2)
+            self.view.controls.clear()
+            text = "\n".join(resp) + "\n" * 8 + "\n".join(resd)
+            result_text = ft.Text(value=text, selectable=True, size=14)
+            self.view.controls.append(result_text)
 
-        self.view.controls.clear()
-        text = "\n".join(resp) + "\n" * 8 + "\n".join(resd)
-        result_text = ft.Text(value=text, selectable=True, size=14)
-        self.view.controls.append(result_text)
+            self._page.update()
 
-        self._page.update()
+    def check(self):
+        vals = list(self.data.values())
+        eng = BasicChecks()
+
+        assert eng.void_array(vals)
+
+        assert eng.is_float(vals[0])
+        assert eng.is_float(vals[1])
+        assert eng.is_float(vals[2])
+        assert eng.is_float(vals[3])

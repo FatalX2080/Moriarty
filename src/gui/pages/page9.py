@@ -71,5 +71,5 @@ class Page9(TaskBasePage):
 
         assert eng.void_array(vals)
 
-        assert eng.is_float(vals[4])
-        assert eng.is_float(vals[5])
+        assert eng.is_float(vals[0])
+        assert eng.is_float(vals[1])
