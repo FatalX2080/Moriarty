@@ -58,7 +58,7 @@ class TaskBasePage(BasePage):
         title = cont(
             content=ft.Text(
                 "Test {0}".format(self.index),
-                theme_style=ft.TextThemeStyle.DISPLAY_LARGE
+                theme_style=ft.TextThemeStyle.DISPLAY_MEDIUM
             ),
             alignment=ft.alignment.center,
             expand=True,

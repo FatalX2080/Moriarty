@@ -5,6 +5,7 @@ from .factory import Factory
 
 
 # TODO 5-7 нижняя полоса съехала
+# TODO в сборке v3 сделать базирование на theme colors
 
 class Win:
     def __init__(self, page):
