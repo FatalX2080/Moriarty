@@ -1,11 +1,11 @@
 import flet as ft
-from config import BASE_SIZE
 
 from .factory import Factory
 
 
 # TODO 5-7 нижняя полоса съехала
 # TODO в сборке v3 сделать базирование на theme colors
+# TODO доделать нормальную настройку размера
 
 class Win:
     def __init__(self, page):
@@ -13,11 +13,8 @@ class Win:
         self.page.title = "Moriarty"
         self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
-        #                               ------!TEST!------
-        skale = 3
-        self.page.window.width = BASE_SIZE[0] // skale
-        self.page.window.height = BASE_SIZE[1] // skale
-        #                               ------!TEST!------
+        self.page.window.width = page.width
+        self.page.window.height = page.height
         w_size = (self.page.window.width, self.page.window.height)
 
         self._win = ft.Container(expand=True)

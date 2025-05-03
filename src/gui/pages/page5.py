@@ -50,7 +50,7 @@ class Page5(TaskBasePage):
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[self.version, self.function, self.evaluate_btn],
+            controls=[ft.Text(""), self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
@@ -72,6 +72,7 @@ class Page5(TaskBasePage):
         task_content = [
             self.count,
             self.res,
+            ft.Row([self.version, self.function]),
             ft.Divider(height=1),
             res_row,
             answers_list
