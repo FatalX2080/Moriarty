@@ -2,7 +2,7 @@ import flet as ft
 import flet.canvas as cv
 from tests import Task6
 
-from .base import TaskBasePage, TableDraftsman, AdjacencyTableDraftsman
+from .base import TaskBasePage, TableDraftsman, AdjacencyTableDraftsman, BasicChecks
 
 
 class Page6(TaskBasePage):
@@ -88,43 +88,73 @@ class Page6(TaskBasePage):
     def process(self, e):
         self.read({"count": self.count, "res": self.res, "fres": self.fres})
 
-        assert self.check()
+        try:
+            self.check()
+        except AssertionError:
+            self.open_error_dialogue(e)
+            return
+
+        try:
+            # process
+            mDnf, mKnf = self.test.process(*self.data.values())
+
+            Dcubes, Dt_data, Dmnf, _ = mDnf
+            Kcubes, Kt_data, Kmnf, _ = mKnf
+
+            # canvas
+            dvals = self.data["res"] + self.data["fres"]
+            kvals = self.test.gen_knf(self.data["res"])
+
+            draftsman = TableDraftsman()
+            draftsman.set_atr(dvals, Dcubes, self.win_size)
+            self.mdnf_canvas.clean()
+            self.mdnf_canvas.shapes = draftsman.draw("1")
+
+            draftsman = TableDraftsman()
+            draftsman.set_atr(tuple(kvals), Kcubes, self.win_size)
+            self.mknf_canvas.clean()
+            self.mknf_canvas.shapes = draftsman.draw("0")
+
+            # answer
+            self.mdnf_text.value = "MDNF {0}".format(Dmnf)
+            self.mknf_text.value = "MKNF {0}".format(Kmnf)
+
+            # table
+            col, rows = self.adj_draftsman.draw(*Dt_data)
+            self.mdnf_adj_table.columns = col
+            self.mdnf_adj_table.rows = rows
+
+            col, rows = self.adj_draftsman.draw(*Kt_data)
+            self.mknf_adj_table.columns = col
+            self.mknf_adj_table.rows = rows
+
+            self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
+
+
+    def check(self):
+        vals = list(self.data.values())
+        eng = BasicChecks()
+
+        assert eng.void_array(vals)
+
+        assert eng.is_int(vals[0])
+        assert eng.borders(vals[0], (4, 4))
+
+        borders = (1, 2 ** int(vals[0]))
+        assert eng.borders(len(vals[1].split()), borders)
+        assert eng.borders(len(vals[2].split()), borders)
+
+        borders = (0, 2 ** int(vals[0]) - 1)
+        fv = [int(el) for el in vals[1].split()]
+        assert eng.borders(max(fv), borders)
+        assert eng.borders(min(fv), borders)
+        borders = (0, 2 ** int(vals[0]) - 1)
+        fv = [int(el) for el in vals[2].split()]
+        assert eng.borders(max(fv), borders)
+        assert eng.borders(min(fv), borders)
 
         self.data["count"] = int(self.data["count"])
         self.data["res"] = list(sorted(self.data["res"].split()))
         self.data["fres"] = list(sorted(self.data["fres"].split()))
-
-        # process
-        mDnf, mKnf = self.test.process(*self.data.values())
-
-        Dcubes, Dt_data, Dmnf, _ = mDnf
-        Kcubes, Kt_data, Kmnf, _ = mKnf
-
-        # canvas
-        dvals = self.data["res"] + self.data["fres"]
-        kvals = self.test.gen_knf(self.data["res"])
-
-        draftsman = TableDraftsman()
-        draftsman.set_atr(dvals, Dcubes, self.win_size)
-        self.mdnf_canvas.clean()
-        self.mdnf_canvas.shapes = draftsman.draw("1")
-
-        draftsman = TableDraftsman()
-        draftsman.set_atr(tuple(kvals), Kcubes, self.win_size)
-        self.mknf_canvas.clean()
-        self.mknf_canvas.shapes = draftsman.draw("0")
-
-        # answer
-        self.mdnf_text.value = "MDNF {0}".format(Dmnf)
-        self.mknf_text.value = "MKNF {0}".format(Kmnf)
-
-        # table
-        col, rows = self.adj_draftsman.draw(*Dt_data)
-        self.mdnf_adj_table.columns = col
-        self.mdnf_adj_table.rows = rows
-
-        col, rows = self.adj_draftsman.draw(*Kt_data)
-        self.mknf_adj_table.columns = col
-        self.mknf_adj_table.rows = rows
-
-        self._page.update()

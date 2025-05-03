@@ -17,17 +17,17 @@ class BasePage:
         return cls.__instance
 
     def __init__(self):
-        bar = BottomBar(BasePage.win, BasePage.page_list)
-        self.bottom_bar = bar.NavBar
+        self.bottom_bar = BottomBar(BasePage.win, BasePage.page_list)
         self._page = None
         self.alert = None
         self.win = BasePage.win
+        self.index = 0
 
     def render(self, event=None):
         if self.alert is not None:
             event.control.page.overlay.append(self.alert)
             self.alert.open = True
-
+        self.bottom_bar.set_page_index(self.index)
         BasePage.win.content = self._page
 
     def pinit(self):
@@ -58,7 +58,7 @@ class TaskBasePage(BasePage):
         title = cont(
             content=ft.Text(
                 "Test {0}".format(self.index),
-                theme_style=ft.TextThemeStyle.DISPLAY_LARGE
+                theme_style=ft.TextThemeStyle.DISPLAY_MEDIUM
             ),
             alignment=ft.alignment.center,
             expand=True,
@@ -68,7 +68,7 @@ class TaskBasePage(BasePage):
     def join_page(self, top_part):
         return ft.Container(
             content=ft.Column(
-                controls=[top_part, self.bottom_bar],
+                controls=[top_part, self.bottom_bar.NavBar],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN
             ),
             expand=True
@@ -78,8 +78,19 @@ class TaskBasePage(BasePage):
         self.data.clear()
         for k in entries.keys(): self.data[k] = entries[k].value
 
-    def check(self):
-        return True
+    def open_error_dialogue(self, e):
+        text = "!WARNING!\nValues are incorrect, check info and try again"
+        dlg = ft.AlertDialog(title=ft.Text(text, size=16), on_dismiss=lambda _: None)
+        e.control.page.overlay.append(dlg)
+        dlg.open = True
+        e.control.page.update()
+
+    def open_text_error_dialogue(self, e):
+        text = "!WARNING!\nError inside the solver, check info and try again"
+        dlg = ft.AlertDialog(title=ft.Text(text, size=16), on_dismiss=lambda _: None)
+        e.control.page.overlay.append(dlg)
+        dlg.open = True
+        e.control.page.update()
 
 
 class TableDraftsman:
@@ -241,3 +252,48 @@ class AdjacencyTableDraftsman:
             ) for i in range(len(rows))
         ]
         return base_col, rows
+
+
+class BasicChecks:
+    def is_int(self, x: str) -> bool:
+        return x.isdigit()
+
+    def borders(self, x: int | float, borders: tuple | list) -> bool:
+        return float(borders[0]) <= float(x) <= float(borders[1])
+
+    def is_float(self, x: str) -> bool:
+        try:
+            float(x)
+            return True
+        except ValueError:
+            return False
+
+    def length(self, x: list | tuple, l: int) -> bool:
+        return len(x) == l
+
+    def equal_length(self, x, y) -> bool:
+        return len(x) == len(y)
+
+    def void(self, x) -> bool:
+        return x
+
+    def void_array(self, x):
+        return all([self.void(el) for el in x])
+
+    def array_grounds(self, x, allowed) -> bool:
+        return all([el in allowed for el in x])
+
+    def include(self, x, litter) -> bool:
+        return litter in x
+
+    def grounds(self, x: str, base) -> bool:
+        try:
+            if "." in x:
+                x = x.split(".")
+                int(x[0], int(base))
+                int(x[1], int(base))
+            else:
+                int(x, int(base))
+            return True
+        except ValueError:
+            return False

@@ -1,7 +1,7 @@
 import flet as ft
 from tests import Task1
 
-from .base import TaskBasePage
+from .base import TaskBasePage, BasicChecks
 
 
 class Page1(TaskBasePage):
@@ -52,9 +52,32 @@ class Page1(TaskBasePage):
     def process(self, e):
         rdict = {"op": self.sign, "v1": self.val1_field, "v2": self.val2_field, "base": self.base_field}
         self.read(rdict)
-        assert self.check()
-        self.data["base"] = int(self.data["base"])
-        res = self.test.process(self.data["op"], (self.data["v1"], self.data["v2"]), self.data["base"])
-        self.res_text.value = "Result {0}".format(res)
-        self._page.update()
+        try:
+            self.check()
+        except AssertionError:
+            self.open_error_dialogue(e)
+            return
 
+        try:
+            res = self.test.process(self.data["op"], (self.data["v1"], self.data["v2"]), self.data["base"])
+            self.res_text.value = "Result {0}".format(res)
+            self._page.update()
+        except:
+            self.open_text_error_dialogue(e)
+
+
+    def check(self):
+        vals = list(self.data.values())
+        eng = BasicChecks()
+
+        assert eng.void_array([vals[1], vals[2], vals[3]])
+
+        assert eng.is_int(vals[3])
+        assert eng.borders(vals[3], (2, 16))
+
+        assert eng.equal_length(vals[1], vals[2])
+
+        assert eng.grounds(vals[1], int(vals[3]))
+        assert eng.grounds(vals[2], int(vals[3]))
+
+        self.data["base"] = int(self.data["base"])
