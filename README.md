@@ -1,4 +1,4 @@
-# 🇲oriarty
+# Moriarty
 Automatic test solver that does not require an Internet connection. Graphical interface is available
 
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-brightgreen?logo=python)](https://www.python.org/)
