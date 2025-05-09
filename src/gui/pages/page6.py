@@ -13,7 +13,7 @@ class Page6(TaskBasePage):
         self.test = Task6()
         self.adj_draftsman = AdjacencyTableDraftsman()
 
-        self.count = ft.TextField(label="Count of variables")
+        self.count = ft.TextField(label="Count of variables", value="4")
         self.res = ft.TextField(label="Results f(x)")
         self.fres = ft.TextField(label="Forbidden results")
 
@@ -91,8 +91,7 @@ class Page6(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            self.open_error_dialogue(e)
-            return
+            return self.open_error_dialogue(e)
 
         try:
             # process
@@ -131,7 +130,6 @@ class Page6(TaskBasePage):
             self._page.update()
         except:
             self.open_text_error_dialogue(e)
-
 
     def check(self):
         vals = list(self.data.values())

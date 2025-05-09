@@ -45,12 +45,11 @@ class Page12(TaskBasePage):
     # ------------------------------------------------------------------------------------------------------
 
     def process(self, e):
-        self.read({"op":self.operation, "1p": self.num1, "2p": self.num2})
+        self.read({"op": self.operation, "1p": self.num1, "2p": self.num2})
         try:
             self.check()
         except AssertionError:
-            self.open_error_dialogue(e)
-            return
+            return self.open_error_dialogue(e)
 
         try:
             res = self.test.process(*self.data.values())
@@ -62,7 +61,6 @@ class Page12(TaskBasePage):
             self._page.update()
         except:
             self.open_text_error_dialogue(e)
-
 
     def check(self):
         vals = list(self.data.values())

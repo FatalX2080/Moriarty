@@ -51,8 +51,7 @@ class Page10(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            self.open_error_dialogue(e)
-            return
+            return self.open_error_dialogue(e)
 
         try:
             pack1 = [self.data["1p"], self.data["2p"], "p"]
@@ -68,7 +67,6 @@ class Page10(TaskBasePage):
             self._page.update()
         except:
             self.open_text_error_dialogue(e)
-
 
     def check(self):
         vals = list(self.data.values())

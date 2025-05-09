@@ -57,8 +57,7 @@ class Page11(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            self.open_error_dialogue(e)
-            return
+            return self.open_error_dialogue(e)
 
         try:
             res = self.test.process(*self.data.values())
@@ -71,8 +70,6 @@ class Page11(TaskBasePage):
             self._page.update()
         except:
             self.open_text_error_dialogue(e)
-
-
     def check(self):
         vals = list(self.data.values())
         eng = BasicChecks()

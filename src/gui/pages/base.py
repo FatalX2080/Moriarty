@@ -8,6 +8,7 @@ from ..navigate import BottomBar
 class BasePage:
     win = None
     win_size = None
+    theme = None
     page_list = None
     __instance = None
 
@@ -99,10 +100,11 @@ class TableDraftsman:
         self.fields = None
         self.cubes = None
         self.win_size = None
+        self.theme = BasePage.theme
 
         self.cell_size = 0
 
-        self.base_color = ft.colors.WHITE
+        self.base_color = ft.colors.WHITE if not self.theme else ft.colors.BLACK
         self.base = []
 
     def set_atr(self, fields: tuple | list, cubes: tuple | list, win_size: tuple | list):
@@ -136,8 +138,10 @@ class TableDraftsman:
 
     def draw_digits(self, digit="1", show_numerating=False):
         digits = []
-        t_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=46, color=self.base_color)
-        info_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=13, color=self.base_color)
+        big_numbers = 46 * (self.cell_size // 83)
+        small_numbers = 13 * (self.cell_size // 83)
+        t_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=big_numbers, color=self.base_color)
+        info_style = ft.TextStyle(weight=ft.FontWeight.BOLD, size=small_numbers, color=self.base_color)
 
         for num in range(16):
             cords = addressing[str(num)]

@@ -1,5 +1,5 @@
 tests_info = (
-    "Welcome to Moriarty.\nBoard of Honor:\nLeAgalas (2)\nSarkoxed (3, 8, 11, 12)\nsappiness7223 (7, 10)\nXukuM (9)",
+    "Welcome to Moriarty.\nThese heroes have made a huge contribution to the development:\nLeAgalas (2)\nSarkoxed (3, 8, 11, 12)\nsappiness7223 (7, 10)\nXukuM (9)",
     "First operand[1001];\nSecond operand[0100];\nBase of the operands[2]",
     "Input number[10001.10011];\nBase of input num[2];\nBase of output num[5];\nInp num lg [0.3010];\nOut num lg [0.6990]",
     "Count of variables n=[3];\nThe values that the function accepts(2^n) [0 1 0 1 0 1 0 1]",
