@@ -90,7 +90,7 @@ Moriarty
 # 📆 Roadmap
 * ~~[1st release](https://github.com/FatalX2080/Moriarty/releases/tag/v1.0) release~~
 * ~~Сreating a base class of checks~~
-* Responsive design according to the theme
+* ~~Responsive design according to the theme~~
 * Unit tests for solving problems
 * Facilitate existing tests
 * Debugging found errors
@@ -104,4 +104,3 @@ Moriarty
 * Q: A white screen with text popped up abruptly. A: The engine is written in python, so it's almost normal. You have entered data that the program could not process.
 * Q: Can I build the app myself? A: Of course, study the flet [documentation](https://flet.dev/docs/publish/) for this.
 * Q: ios? A: no
-Automatic test solver that does not require an Internet connection. Graphical interface is available
