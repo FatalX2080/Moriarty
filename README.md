@@ -88,7 +88,7 @@ Moriarty
 | Cross-platform   | ✅      | Flet (GUI)                   |
 
 # 📆 Roadmap
-* ~~[1st release](https://github.com/FatalX2080/Moriarty/releases/tag/v1.0) release~~~
+* ~~[1st release](https://github.com/FatalX2080/Moriarty/releases/tag/v1.0) release~~
 * ~~Сreating a base class of checks~~
 * Responsive design according to the theme
 * Unit tests for solving problems
