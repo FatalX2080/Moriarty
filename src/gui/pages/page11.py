@@ -70,7 +70,6 @@ class Page11(TaskBasePage):
             self._page.update()
         except:
             self.open_text_error_dialogue(e)
-
     def check(self):
         vals = list(self.data.values())
         eng = BasicChecks()
@@ -81,3 +80,4 @@ class Page11(TaskBasePage):
         assert eng.is_float(vals[2])
         assert eng.is_int(vals[3])
         assert eng.is_int(vals[4])
+

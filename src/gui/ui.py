@@ -16,7 +16,7 @@ class Win:
         self._win = ft.Container(expand=True)
 
         self.page.update()
-
+        
         size = (self.page.window.width, self.page.window.height)
         base_page_config = (self.get_win, size, self.define_theme())
         factory = Factory(base_page_config)

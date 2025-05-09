@@ -48,6 +48,7 @@ class Page7(TaskBasePage):
         except AssertionError:
             return self.open_error_dialogue(e)
 
+
         try:
             res = self.test.process(*self.data.values())
             self.view.controls.clear()
