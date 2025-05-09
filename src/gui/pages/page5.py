@@ -15,7 +15,7 @@ class Page5(TaskBasePage):
         self.draftsman = TableDraftsman()
         self.adj_draftsman = AdjacencyTableDraftsman()
 
-        self.count = ft.TextField(label="Count of variables")
+        self.count = ft.TextField(label="Count of variables", value="4")
         self.res = ft.TextField(label="Results f(x)")
 
         self.version = ft.Dropdown(
@@ -113,15 +113,11 @@ class Page5(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            self.open_error_dialogue(e)
-            return
+            return self.open_error_dialogue(e)
 
         try:
             # process
-            if not self.data["func"]:
-                func = self.testV2
-            else:
-                func = self.testV2 if self.version.value == "v2" else self.testV1
+            func = self.testV2 if not self.data["func"] or self.version.value == "v2" else self.testV1
             cubes, t_data, sdknf, confirmed = func.process(*self.data.values())
 
             # canvas
@@ -142,7 +138,6 @@ class Page5(TaskBasePage):
             self._page.update()
         except:
             self.open_text_error_dialogue(e)
-
 
     def check(self):
         vals = list(self.data.values())

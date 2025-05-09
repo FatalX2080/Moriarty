@@ -66,8 +66,7 @@ class Page8(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            self.open_error_dialogue(e)
-            return
+            return self.open_error_dialogue(e)
 
         try:
             res = self.test.process(*self.data.values())

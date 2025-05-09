@@ -27,6 +27,7 @@ class MainMenu:
         try:
             self.__win.content = None
             page_iex = e.control.selected_index
+            if page_iex > len(self.__pages_list) - 1: page_iex = 0
             page = self.__pages_list[page_iex]
             if page is None:  page = self.__pages_list[0]
             page.render(e)

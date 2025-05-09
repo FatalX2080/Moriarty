@@ -57,8 +57,7 @@ class Page11(TaskBasePage):
         try:
             self.check()
         except AssertionError:
-            self.open_error_dialogue(e)
-            return
+            return self.open_error_dialogue(e)
 
         try:
             res = self.test.process(*self.data.values())
@@ -72,7 +71,6 @@ class Page11(TaskBasePage):
         except:
             self.open_text_error_dialogue(e)
 
-
     def check(self):
         vals = list(self.data.values())
         eng = BasicChecks()
@@ -83,4 +81,3 @@ class Page11(TaskBasePage):
         assert eng.is_float(vals[2])
         assert eng.is_int(vals[3])
         assert eng.is_int(vals[4])
-
