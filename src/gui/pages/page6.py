@@ -33,11 +33,16 @@ class Page6(TaskBasePage):
             column_spacing=5, horizontal_margin=5
         )
 
+        self.func = ft.Dropdown(
+            label="function", autofocus=True, value="dnf",
+            options=[ft.dropdown.Option("knf"), ft.dropdown.Option("dnf")],
+        )
+
         self._page = self.pinit()
 
     def pinit(self):
         res_row = ft.Row(
-            controls=[ft.Text(""), self.evaluate_btn],
+            controls=[self.func, self.evaluate_btn],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
@@ -49,7 +54,7 @@ class Page6(TaskBasePage):
         )
 
         k_adj_table = ft.Row(
-            controls=[self.mdnf_adj_table],
+            controls=[self.mknf_adj_table],
             scroll=ft.ScrollMode.AUTO,
             expand=True,
             wrap=False
@@ -95,6 +100,9 @@ class Page6(TaskBasePage):
 
         try:
             # process
+            if self.func.value[0] == "k":
+                self.data["res"] = self._switch_func(self.data["res"], self.data["fres"])
+
             mDnf, mKnf = self.test.process(*self.data.values())
 
             Dcubes, Dt_data, Dmnf, _ = mDnf
@@ -102,7 +110,7 @@ class Page6(TaskBasePage):
 
             # canvas
             dvals = self.data["res"] + self.data["fres"]
-            kvals = self.test.gen_knf(self.data["res"])
+            kvals = self._switch_func(self.data["res"], self.data["fres"]) + self.data["fres"]
 
             draftsman = TableDraftsman()
             draftsman.set_atr(dvals, Dcubes, self.win_size)
@@ -128,7 +136,8 @@ class Page6(TaskBasePage):
             self.mknf_adj_table.rows = rows
 
             self._page.update()
-        except:
+        except Exception as err:
+            print(err)
             self.open_text_error_dialogue(e)
 
     def check(self):
@@ -156,3 +165,7 @@ class Page6(TaskBasePage):
         self.data["count"] = int(self.data["count"])
         self.data["res"] = list(sorted(self.data["res"].split()))
         self.data["fres"] = list(sorted(self.data["fres"].split()))
+
+    def _switch_func(self, func, forbidden) -> list:
+        knf_values = set([str(i) for i in range(0, 16)]) - set(func) - set(forbidden)
+        return [str(i) for i in sorted(list(knf_values))]
