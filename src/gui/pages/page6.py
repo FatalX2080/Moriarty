@@ -76,6 +76,7 @@ class Page6(TaskBasePage):
                 self.mknf_canvas,
                 k_adj_table,
                 mknf_function_row,
+                ft.Text(""),
             ],
         )
 

@@ -64,7 +64,7 @@ class Page5(TaskBasePage):
         function_row = ft.Row(controls=[self.icon, self.function_text], scroll=ft.ScrollMode.AUTO)
 
         answers_list = ft.ListView(
-            height=self.win_size[1] * 0.55,
+            height=self.win_size[1] * 0.49,
             spacing=10,
             controls=[self.canvas, adj_table, function_row],
         )
@@ -75,7 +75,7 @@ class Page5(TaskBasePage):
             ft.Row([self.version, self.function]),
             ft.Divider(height=1),
             res_row,
-            answers_list
+            answers_list,
         ]
         top_part = self.join_top(task_content)
         return self.join_page(top_part)

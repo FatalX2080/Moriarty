@@ -12,13 +12,13 @@ class Win:
         self.page = page
         self.page.title = name
         self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
-        self.set_size(size)
+        self.set_size(page, size)
         self._win = ft.Container(expand=True)
 
         self.page.update()
-        
-        size = (self.page.window.width, self.page.window.height)
-        base_page_config = (self.get_win, size, self.define_theme())
+
+        win_size = (self.page.window.width, self.page.window.height)
+        base_page_config = (self.get_win, win_size, self.define_theme())
         factory = Factory(base_page_config)
         self.pages_list = factory.get_list()
 
@@ -29,10 +29,13 @@ class Win:
     def get_win(self):
         return self._win
 
-    def set_size(self, page_size):
+    def set_size(self, page, page_size):
         if page_size:
             self.page.window.width = page_size[0] // 3
             self.page.window.height = page_size[1] // 3
+        else:
+            self.page.window.width = page.width
+            self.page.window.height = page.height
 
     def define_theme(self) -> int:
         theme = 1  # 1 - Bright | 0 - Dark
