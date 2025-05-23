@@ -54,7 +54,7 @@ class Page0(BasePage):
                           spacing=0)
 
         text_list = ft.ListView(
-            height=self.win_size[1] * 0.90,
+            height=self.win_size[1] * 0.89,
             spacing=10,
             controls=[
                 page_title,

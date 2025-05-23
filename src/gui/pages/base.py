@@ -62,9 +62,10 @@ class TaskBasePage(BasePage):
                 theme_style=ft.TextThemeStyle.DISPLAY_MEDIUM
             ),
             alignment=ft.alignment.center,
-            expand=True,
+            margin=10,
+            height=50,
         )
-        return cont(col([title, cont(col(task_block))]))
+        return cont(col([title, cont(col(task_block))]), height=BasePage.win_size[1]-70)
 
     def join_page(self, top_part):
         return ft.Container(
