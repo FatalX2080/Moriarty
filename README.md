@@ -2,7 +2,7 @@
 Automatic test solver that does not require an Internet connection. Graphical interface is available
 
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-brightgreen?logo=python)](https://www.python.org/)
-![version](https://img.shields.io/badge/version-1.0-green)
+![version](https://img.shields.io/badge/version-1.2-green)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 
