@@ -47,35 +47,16 @@ Moriarty
     │   ├── pages
     │   │   ├── base.py
     │   │   ├── page0.py
-    │   │   ├── page10.py
-    │   │   ├── page11.py
-    │   │   ├── page12.py
-    │   │   ├── page1.py
-    │   │   ├── page2.py
-    │   │   ├── page3.py
-    │   │   ├── page4.py
-    │   │   ├── page5.py
-    │   │   ├── page6.py
-    │   │   ├── page7.py
-    │   │   ├── page8.py
-    │   │   └── page9.py
+    │   │   ├── ...
+    │   │   └── page12.py
     │   └── ui.py
     ├── __init__.py
     ├── main.py
     └── tests
         ├── __init__.py
-        ├── test10.py
-        ├── test11.py
-        ├── test12.py
         ├── test1.py
-        ├── test2.py
-        ├── test3.py
-        ├── test4.py
-        ├── test5.py
-        ├── test6.py
-        ├── test7.py
-        ├── test8.py
-        ├── test9.py
+        ├── ...
+        ├── test12.py
         └── test.py
 ```
 
