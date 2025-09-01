@@ -2,9 +2,9 @@
 Automatic test solver that does not require an Internet connection. Graphical interface is available
 
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-brightgreen?logo=python)](https://www.python.org/)
-![version](https://img.shields.io/badge/version-1.0-green)
+![version](https://img.shields.io/badge/version-1.2-green)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
+![Downloads](https://img.shields.io/github/downloads/FatalX2080/Moriarty/total?logo=github&color=orange)
 
 # 🚀Quick Start
 Go to [release page](https://github.com/FatalX2080/Moriarty/releases) and download last stable release (apk/source). Enjoy using it;)
@@ -47,35 +47,16 @@ Moriarty
     │   ├── pages
     │   │   ├── base.py
     │   │   ├── page0.py
-    │   │   ├── page10.py
-    │   │   ├── page11.py
-    │   │   ├── page12.py
-    │   │   ├── page1.py
-    │   │   ├── page2.py
-    │   │   ├── page3.py
-    │   │   ├── page4.py
-    │   │   ├── page5.py
-    │   │   ├── page6.py
-    │   │   ├── page7.py
-    │   │   ├── page8.py
-    │   │   └── page9.py
+    │   │   ├── ...
+    │   │   └── page12.py
     │   └── ui.py
     ├── __init__.py
     ├── main.py
     └── tests
         ├── __init__.py
-        ├── test10.py
-        ├── test11.py
-        ├── test12.py
         ├── test1.py
-        ├── test2.py
-        ├── test3.py
-        ├── test4.py
-        ├── test5.py
-        ├── test6.py
-        ├── test7.py
-        ├── test8.py
-        ├── test9.py
+        ├── ...
+        ├── test12.py
         └── test.py
 ```
 
